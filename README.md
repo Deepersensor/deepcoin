@@ -1,5 +1,7 @@
 # DeepCoin - AI-Powered Cryptocurrency Platform
 
+
+# synopsis
 This is a comprehensive cryptocurrency and financial services platform built with Next.js, leveraging AI for predictive analytics and trading insights. The platform connects to the Blockchair.com API to provide real-time blockchain and cryptocurrency data.
 
 ## Features
