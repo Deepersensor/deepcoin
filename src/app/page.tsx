@@ -150,14 +150,14 @@ export default function Home() {
           whileTap={{ scale: 0.95 }}
           className="login-btn"
         >
-          Enter Reality
+          Signup
         </motion.button>
         <motion.button
           whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(120, 255, 214, 0.5)" }}
           whileTap={{ scale: 0.95 }}
           className="signup-btn"
         >
-          Transcend Form
+          App
         </motion.button>
       </div>
 
