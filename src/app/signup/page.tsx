@@ -40,11 +40,11 @@ export default function SignupPage() {
           transition={{ duration: 0.8 }}
         >
           <Link href="/" className="absolute top-8 left-8 text-white/70 hover:text-white transition-colors">
-            ← Return to Reality
+            ← Back
           </Link>
 
           <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-cyan-400">
-            Begin Transcendence
+            Sign Up
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -55,7 +55,7 @@ export default function SignupPage() {
               >
                 <input
                   type="email"
-                  placeholder="Quantum Email Address"
+                  placeholder="Email Address"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="cosmic-input"
@@ -70,7 +70,7 @@ export default function SignupPage() {
               >
                 <input
                   type="password"
-                  placeholder="Neural Password"
+                  placeholder="Password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="cosmic-input"
@@ -85,7 +85,7 @@ export default function SignupPage() {
               >
                 <input
                   type="password"
-                  placeholder="Confirm Neural Password"
+                  placeholder="Confirm Password"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   className="cosmic-input"
@@ -101,13 +101,13 @@ export default function SignupPage() {
               className="cosmic-button w-full"
               type="submit"
             >
-              Initialize Consciousness
+              Sign Up
             </motion.button>
 
             <div className="text-center mt-4 text-sm text-white/70">
-              Already transcendent?{' '}
+              Already have an account?{' '}
               <Link href="/signin" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                Return to Source
+                Sign In
               </Link>
             </div>
           </form>

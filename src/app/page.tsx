@@ -151,7 +151,7 @@ export default function Home() {
             whileTap={{ scale: 0.95 }}
             className="login-btn"
           >
-            Enter Reality
+            Sign In
           </motion.button>
         </Link>
         <Link href="/signup">
@@ -160,7 +160,7 @@ export default function Home() {
             whileTap={{ scale: 0.95 }}
             className="signup-btn"
           >
-            Transcend Form
+            Sign Up
           </motion.button>
         </Link>
       </div>
