@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "appwrite": "^17.0.0",
     "axios": "^1.8.2",
+    "chart.js": "^4.4.8",
     "framer-motion": "^12.4.10",
     "next": "15.2.1",
     "react": "^19.0.0",
+    "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0"
   },
   "devDependencies": {

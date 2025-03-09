@@ -9,6 +9,12 @@ interface PricePrediction {
   percentageChange: number;
   confidence: PredictionConfidence;
   factors: string[];
+  historicalPrices: {
+    timestamp: number;
+    price: number;
+  }[];
+  accuracyScore: number;
+  volumeChange: number;
 }
 
 /**
@@ -42,12 +48,24 @@ export class PredictionService {
       // Determine confidence based on timeframe (shorter = higher confidence)
       const confidence = this.determineConfidence(timeframe);
       
+      // Get historical prices
+      const historicalPrices = await this.getHistoricalPrices(coinSymbol, timeframe);
+      
+      // Calculate accuracy score (mock implementation)
+      const accuracyScore = Math.random() * 100;
+      
+      // Calculate volume change (mock implementation)
+      const volumeChange = Math.random() * 100;
+      
       return {
         currentPrice,
         predictedPrice,
         percentageChange,
         confidence,
-        factors
+        factors,
+        historicalPrices,
+        accuracyScore,
+        volumeChange
       };
     } catch (error) {
       console.error(`Error generating prediction for ${coinSymbol}: ${error}`);
@@ -104,6 +122,42 @@ export class PredictionService {
     }
     
     return factors;
+  }
+  
+  /**
+   * Get historical prices for a cryptocurrency
+   */
+  async getHistoricalPrices(coinSymbol: string, timeframe: PredictionTimeframe) {
+    try {
+      const days = this.getTimeframeDays(timeframe);
+      const marketData = await blockchairClient.getMarketData(coinSymbol.toLowerCase());
+      
+      // Generate mock historical data - replace with real API call
+      const currentPrice = marketData?.data?.market_price_usd || 40000;
+      const historicalPrices = Array(days).fill(0).map((_, i) => ({
+        timestamp: Date.now() - (i * 24 * 60 * 60 * 1000),
+        price: currentPrice * (1 + (Math.random() * 0.4 - 0.2))
+      }));
+      
+      return historicalPrices.reverse();
+    } catch (error) {
+      console.error(`Error fetching historical prices: ${error}`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Helper method to determine number of days based on timeframe
+   */
+  private getTimeframeDays(timeframe: PredictionTimeframe): number {
+    switch (timeframe) {
+      case '1d': return 1;
+      case '7d': return 7;
+      case '30d': return 30;
+      case '90d': return 90;
+      case '1y': return 365;
+      default: return 7;
+    }
   }
 }
 
