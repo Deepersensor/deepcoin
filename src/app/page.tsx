@@ -145,20 +145,24 @@ export default function Home() {
       </div>
       
       <div className="auth-container">
-        <motion.button
-          whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(255, 255, 255, 0.5)" }}
-          whileTap={{ scale: 0.95 }}
-          className="login-btn"
-        >
-          Signup
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(120, 255, 214, 0.5)" }}
-          whileTap={{ scale: 0.95 }}
-          className="signup-btn"
-        >
-          App
-        </motion.button>
+        <Link href="/signin">
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(255, 255, 255, 0.5)" }}
+            whileTap={{ scale: 0.95 }}
+            className="login-btn"
+          >
+            Enter Reality
+          </motion.button>
+        </Link>
+        <Link href="/signup">
+          <motion.button
+            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(120, 255, 214, 0.5)" }}
+            whileTap={{ scale: 0.95 }}
+            className="signup-btn"
+          >
+            Transcend Form
+          </motion.button>
+        </Link>
       </div>
 
       <div className="content-container">
