@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #050518;
+  --foreground: #e8e8ff;
+  --accent-1: #ff00c3;
+  --accent-2: #7000ff;
+  --accent-3: #00e0ff;
+  --card-bg: rgba(8, 8, 25, 0.7);
+  --cosmic-orbit-1: rgba(255, 0, 195, 0.5);
+  --cosmic-orbit-2: rgba(112, 0, 255, 0.5);
+  --cosmic-orbit-3: rgba(0, 224, 255, 0.5);
 }
 
 @theme inline {
@@ -14,13 +21,350 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #050518;
+    --foreground: #e8e8ff;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Surreal Container */
+.surreal-container {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Background Elements */
+.background-layer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+  will-change: transform;
+}
+
+.animated-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, rgba(76, 0, 255, 0.7) 0%, rgba(0, 209, 255, 0.7) 100%);
+}
+
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.15;
+  mix-blend-mode: overlay;
+}
+
+/* Content Container */
+.content-container {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2rem;
+  z-index: 1;
+}
+
+/* Auth Buttons */
+.auth-container {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
+  z-index: 10;
+}
+
+.login-btn, .signup-btn {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.7rem 1.5rem;
+  border-radius: 50px;
+  color: var(--foreground);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.signup-btn {
+  background: linear-gradient(135deg, rgba(112, 0, 255, 0.8), rgba(0, 224, 255, 0.8));
+}
+
+/* Hero Section */
+.hero-text {
+  position: relative;
+  margin-top: 5rem;
+  text-align: center;
+  max-width: 800px;
+}
+
+.hero-text h1 {
+  font-size: 8rem;
+  font-weight: 900;
+  margin: 0;
+  background: -webkit-linear-gradient(45deg, var(--accent-1), var(--accent-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 15px rgba(255, 0, 195, 0.3));
+  letter-spacing: -0.05em;
+  position: relative;
+}
+
+.subtitle {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+  height: 2rem;
+}
+
+.changing-words {
+  position: relative;
+  height: 2rem;
+  width: 8rem;
+  overflow: hidden;
+}
+
+.changing-words span {
+  position: absolute;
+  height: 2rem;
+  width: 100%;
+  top: 0;
+  font-weight: bold;
+  color: var(--accent-3);
+}
+
+.hero-description {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Orbital Animation */
+.orbitals {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+
+.orbital {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  will-change: transform;
+}
+
+.orbital-1 {
+  width: 300px;
+  height: 300px;
+  border: 2px solid var(--cosmic-orbit-1);
+  animation: rotate1 20s linear infinite;
+}
+
+.orbital-2 {
+  width: 500px;
+  height: 500px;
+  border: 2px solid var(--cosmic-orbit-2);
+  animation: rotate2 30s linear infinite;
+}
+
+.orbital-3 {
+  width: 700px;
+  height: 700px;
+  border: 2px solid var(--cosmic-orbit-3);
+  animation: rotate3 40s linear infinite;
+}
+
+@keyframes rotate1 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes rotate2 {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+
+@keyframes rotate3 {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  margin-top: 5rem;
+  padding: 2rem 0;
+}
+
+.feature-card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  height: 100%;
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+}
+
+.feature-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(45deg, #fff, #b0b0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.feature-card p {
+  color: rgba(232, 232, 255, 0.8);
+  font-size: 0.95rem;
+  position: relative;
+  z-index: 1;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--accent-3);
+  position: relative;
+  z-index: 1;
+}
+
+.feature-hover-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.feature-card:hover .feature-hover-effect {
+  opacity: 1;
+}
+
+/* Cosmic Badge */
+.cosmic-badge {
+  position: relative;
+  margin-top: 4rem;
+  margin-bottom: 4rem;
+}
+
+.cosmic-badge-inner {
+  background: linear-gradient(135deg, rgba(8, 8, 25, 0.8), rgba(20, 20, 50, 0.8));
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cosmic-circle {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--accent-1),
+    var(--accent-2),
+    var(--accent-3),
+    var(--accent-1)
+  );
+  animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Floating Bubble Animation */
+.floating-bubble {
+  pointer-events: none;
+  z-index: -1;
+  box-shadow: inset 0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .hero-text h1 {
+    font-size: 4rem;
+  }
+  
+  .subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .orbitals {
+    transform: scale(0.6) translate(-80%, -80%);
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .auth-container {
+    top: 1rem;
+    right: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-text h1 {
+    font-size: 3rem;
+  }
+  
+  .orbitals {
+    transform: scale(0.4) translate(-125%, -125%);
+  }
+  
+  .auth-container {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .login-btn, .signup-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+  }
 }

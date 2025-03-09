@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Deepcoin",
-  description: "AI powered crypto advisor",
+  title: "Deepcoin | Reality-Bending Crypto",
+  description: "Where cryptocurrency meets the edge of perception. AI-powered crypto analytics beyond reality.",
 };
 
 export default function RootLayout({
@@ -24,6 +24,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Add Framer Motion */}
+        <script
+          src="https://unpkg.com/framer-motion@10.12.4/dist/framer-motion.js"
+          async
+        ></script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
