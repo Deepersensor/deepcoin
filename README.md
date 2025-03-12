@@ -69,6 +69,7 @@ To learn more about the tools and technologies used in this project:
 - [Next.js Documentation](https://nextjs.org/docs)
 - [Blockchair API Docs](https://blockchair.com/api)
 - [TailwindCSS](https://tailwindcss.com/docs)
+- [Movement Labs](https://movementlabs.xyz/)
 
 ## Deployment
 
