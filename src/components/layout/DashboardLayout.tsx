@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BellIcon, UserCircleIcon, HomeIcon, ChartBarIcon, KeyIcon, CurrencyDollarIcon } from '@heroicons/react/24/outline';
+import { useWallet } from '@aptos-labs/wallet-adapter-react';
+import { BellIcon, UserCircleIcon, HomeIcon, ChartBarIcon, KeyIcon, CurrencyDollarIcon, WalletIcon } from '@heroicons/react/24/outline';
+import { truncateAddress } from '@/lib/utils/address';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -12,6 +14,9 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [showNotifications, setShowNotifications] = useState(false);
+  const [showWalletDropdown, setShowWalletDropdown] = useState(false);
+  const { account, wallet, disconnect } = useWallet();
+  
   const [notifications] = useState([
     {
       id: 1,
@@ -41,6 +46,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     { name: 'API Keys', href: '/dashboard/api-keys', icon: KeyIcon },
     { name: 'Converter', href: '/dashboard/converter', icon: CurrencyDollarIcon },
   ];
+
+  const handleDisconnect = async () => {
+    try {
+      await disconnect();
+      // Redirect to home page after disconnect
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Failed to disconnect wallet:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -85,7 +100,10 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <div className="relative">
                 <motion.button
                   className="p-2 rounded-full text-gray-300 hover:text-white focus:outline-none"
-                  onClick={() => setShowNotifications(!showNotifications)}
+                  onClick={() => {
+                    setShowNotifications(!showNotifications);
+                    if (showWalletDropdown) setShowWalletDropdown(false);
+                  }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
@@ -125,8 +143,62 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 )}
               </div>
               
-              {/* Profile dropdown */}
+              {/* Wallet dropdown */}
               <div className="relative ml-3">
+                <div>
+                  <motion.button 
+                    className="flex items-center space-x-2 p-2 rounded-full text-gray-300 hover:text-white focus:outline-none"
+                    onClick={() => {
+                      setShowWalletDropdown(!showWalletDropdown);
+                      if (showNotifications) setShowNotifications(false);
+                    }}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <span className="sr-only">Open wallet menu</span>
+                    <WalletIcon className="h-6 w-6" />
+                    {account && (
+                      <span className="hidden md:inline text-sm font-medium">
+                        {truncateAddress(account.address)}
+                      </span>
+                    )}
+                  </motion.button>
+                </div>
+                
+                {/* Wallet dropdown */}
+                {showWalletDropdown && (
+                  <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg py-1 bg-gray-900 bg-opacity-90 backdrop-filter backdrop-blur-lg border border-gray-700 focus:outline-none z-50">
+                    <div className="px-4 py-3 border-b border-gray-800">
+                      <h3 className="text-sm font-medium text-gray-200">Your Wallet</h3>
+                      <div className="mt-2">
+                        <div className="flex items-center">
+                          <span className="bg-green-900 p-1 rounded-full mr-2">
+                            <WalletIcon className="h-4 w-4 text-green-400" />
+                          </span>
+                          <span className="text-sm font-medium">{wallet?.name}</span>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="px-4 py-3">
+                      <div className="text-xs text-gray-400 mb-1">Wallet Address</div>
+                      <div className="font-mono text-sm break-all">{account?.address}</div>
+                    </div>
+                    
+                    <div className="px-4 py-2 border-t border-gray-800">
+                      <button 
+                        onClick={handleDisconnect}
+                        className="w-full text-left text-sm text-red-400 hover:text-red-300 transition-colors"
+                      >
+                        Disconnect Wallet
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              
+              {/* User profile icon (preserved for backward compatibility) */}
+              <div className="relative ml-2">
                 <div>
                   <button className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none">
                     <span className="sr-only">Open user menu</span>

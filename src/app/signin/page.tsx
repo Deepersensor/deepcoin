@@ -1,20 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import WalletConnection from '@/components/wallet/WalletConnection';
 
 export default function SigninPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Add signin logic here
-  };
-
   return (
     <main className="surreal-container min-h-screen relative overflow-hidden">
       <div className="background-layer">
@@ -43,58 +33,28 @@ export default function SigninPage() {
           </Link>
 
           <h1 className="text-4xl font-bold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-purple-400">
-            Sign In
+            Connect Wallet
           </h1>
+          
+          <div className="mb-6">
+            <p className="text-center text-gray-300 mb-6">
+              Sign in to DeepCoin by connecting your Aptos blockchain wallet
+            </p>
+            
+            <WalletConnection redirectTo="/dashboard" />
+          </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-4">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="cosmic-input-container"
-              >
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="cosmic-input"
-                  required
-                />
-                <div className="cosmic-input-glow"></div>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="cosmic-input-container"
-              >
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="cosmic-input"
-                  required
-                />
-                <div className="cosmic-input-glow"></div>
-              </motion.div>
-            </div>
-
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="cosmic-button w-full"
-              type="submit"
+          <div className="text-center mt-8 text-sm text-white/70">
+            Don't have a wallet?{' '}
+            <a 
+              href="https://petra.app/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 transition-colors"
             >
-              Sign In
-            </motion.button>
-
-            <div className="text-center mt-4 text-sm text-white/70">
-              Don't have an account?{' '}
-              <Link href="/signup" className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                Sign Up
-              </Link>
-            </div>
-          </form>
+              Get a wallet
+            </a>
+          </div>
         </motion.div>
       </div>
     </main>
