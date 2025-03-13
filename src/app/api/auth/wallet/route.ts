@@ -1,19 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { appwriteConfig, account, databases } from '@/lib/appwrite/client';
+import { appwriteConfig, databases } from '@/lib/appwrite/client';
 import { ID, Query } from 'appwrite';
+import { WalletType } from '@/lib/utils/wallet';
 
 export async function POST(request: NextRequest) {
   try {
-    const { walletAddress, walletName, message, signature } = await request.json();
+    const { walletAddress, walletName, walletType, message, signature } = await request.json();
 
-    if (!walletAddress || !walletName) {
+    if (!walletAddress || !walletName || !walletType) {
       return NextResponse.json(
-        { error: 'Wallet address and name are required' },
+        { error: 'Wallet address, name, and type are required' },
         { status: 400 }
       );
     }
 
-    // Check if user exists
+    // Validate wallet type
+    if (!Object.values(WalletType).includes(walletType)) {
+      return NextResponse.json(
+        { error: 'Invalid wallet type' },
+        { status: 400 }
+      );
+    }
+
     try {
       const existingWallets = await databases.listDocuments(
         appwriteConfig.databaseId,
@@ -30,6 +38,7 @@ export async function POST(request: NextRequest) {
           {
             address: walletAddress,
             name: walletName,
+            walletType: walletType,
             lastConnected: new Date().toISOString()
           }
         );
@@ -40,14 +49,17 @@ export async function POST(request: NextRequest) {
           appwriteConfig.walletCollectionId,
           existingWallets.documents[0].$id,
           {
-            lastConnected: new Date().toISOString()
+            lastConnected: new Date().toISOString(),
+            name: walletName, // Update name in case user switched wallets with same address
+            walletType: walletType // Update type in case that changed
           }
         );
       }
 
       return NextResponse.json({
         success: true,
-        walletAddress
+        walletAddress,
+        walletType
       });
     } catch (error) {
       console.error('Error processing wallet authentication:', error);

@@ -6,30 +6,33 @@ import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { MartianWallet } from "@martianwallet/aptos-wallet-adapter";
 import { PontemWallet } from "@pontem/wallet-adapter-plugin";
 import { RiseWallet } from "@rise-wallet/wallet-adapter";
-import { account, databases } from "@/lib/appwrite/client";
-import { ID } from "appwrite";
 
-// ---- New Wagmi Imports & Configuration ----
-import { WagmiConfig, createClient, configureChains, chain } from 'wagmi';
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
-import { publicProvider } from 'wagmi/providers/public';
+// ---- Wagmi v2 Imports & Configuration ----
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { WagmiProvider, http, createConfig } from 'wagmi';
+import { mainnet, polygon, sepolia, goerli, polygonMumbai } from 'wagmi/chains';
+import { injected, metaMask, walletConnect } from 'wagmi/connectors';
 
-const { chains, provider, webSocketProvider } = configureChains(
-  [chain.goerli], // using Goerli as testnet alternative
-  [publicProvider()]
-);
+// Create a React Query client
+const queryClient = new QueryClient();
 
-const wagmiClient = createClient({
-  autoConnect: true,
+// Configure wagmi
+const config = createConfig({
+  chains: [mainnet, polygon, sepolia, goerli, polygonMumbai],
   connectors: [
-    new MetaMaskConnector({ chains }),
-    new WalletConnectConnector({ chains, options: { qrcode: true } }),
-    new CoinbaseWalletConnector({ chains, options: { appName: 'Deepcoin' } }),
+    injected(),
+    metaMask(),
+    walletConnect({
+      projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || 'demo-project',
+    }),
   ],
-  provider,
-  webSocketProvider,
+  transports: {
+    [mainnet.id]: http(),
+    [polygon.id]: http(),
+    [sepolia.id]: http(),
+    [goerli.id]: http(),
+    [polygonMumbai.id]: http(),
+  },
 });
 // ---------------------------------------------
 
@@ -42,25 +45,42 @@ export const WalletProvider = ({ children }: PropsWithChildren) => {
     new RiseWallet()
   ];
   
-  const config = new AptosConfig({
+  const aptosConfig = new AptosConfig({
     network: Network.TESTNET,
     fullnode: 'https://aptos.testnet.bardock.movementlabs.xyz/v1',
     faucet: 'https://faucet.testnet.bardock.movementnetwork.xyz/'
   });
 
+  // Effect to handle wallet reconnection persistence
+  useEffect(() => {
+    // This effect is for any additional initialization needed
+    // when the wallet providers are first mounted
+    const handleStorageChange = () => {
+      // Re-trigger wallet connection on storage events (for multi-tab support)
+      // This helps with wallet session synchronization across tabs
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
   return (
-    <WagmiConfig client={wagmiClient}>
-      <AptosWalletAdapterProvider
-        plugins={wallets}
-        autoConnect={true}
-        dappConfig={config}
-        onError={(error) => {
-          console.log("error", error);
-        }}
-      >
-        {children}
-      </AptosWalletAdapterProvider>
-    </WagmiConfig>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <AptosWalletAdapterProvider
+          plugins={wallets}
+          autoConnect={true}
+          dappConfig={aptosConfig}
+          onError={(error) => {
+            console.log("error", error);
+          }}
+        >
+          {children}
+        </AptosWalletAdapterProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };
 

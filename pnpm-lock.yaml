@@ -14,6 +14,9 @@ importers:
       '@aptos-labs/wallet-adapter-react':
         specifier: ^4.1.2
         version: 4.1.2(@aptos-labs/ts-sdk@1.35.0(axios@1.8.2)(got@11.8.6))(@mizuwallet-sdk/core@1.4.0(@aptos-labs/ts-sdk@1.35.0(axios@1.8.2)(got@11.8.6))(@mizuwallet-sdk/protocol@0.0.6)(graphql-request@7.1.2(graphql@16.10.0)))(@mizuwallet-sdk/protocol@0.0.6)(@telegram-apps/bridge@1.9.2)(@types/react@19.0.8)(@wallet-standard/core@1.0.3)(aptos@1.21.0)(axios@1.8.2)(got@11.8.6)(react@19.0.0)
+      '@coinbase/wallet-sdk':
+        specifier: ^4.3.0
+        version: 4.3.0
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.0.0)
@@ -29,6 +32,12 @@ importers:
       '@rise-wallet/wallet-adapter':
         specifier: ^0.1.2
         version: 0.1.2
+      '@tanstack/react-query':
+        specifier: ^5.67.3
+        version: 5.67.3(react@19.0.0)
+      '@wagmi/core':
+        specifier: ^2.16.5
+        version: 2.16.5(@tanstack/query-core@5.67.3)(@types/react@19.0.8)(react@19.0.0)(typescript@5.7.3)(use-sync-external-store@1.4.0(react@19.0.0))(viem@2.23.10(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10))
       appwrite:
         specifier: ^17.0.0
         version: 17.0.0
@@ -59,6 +68,9 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      viem:
+        specifier: 2.x
+        version: 2.23.10(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10)
       wagmi:
         specifier: ^2.14.13
         version: 2.14.13(@tanstack/query-core@5.67.3)(@tanstack/react-query@5.67.3(react@19.0.0))(@types/react@19.0.8)(bufferutil@4.0.9)(react@19.0.0)(typescript@5.7.3)(utf-8-validate@5.0.10)(viem@2.23.10(bufferutil@4.0.9)(typescript@5.7.3)(utf-8-validate@5.0.10))
