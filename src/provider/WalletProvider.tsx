@@ -9,6 +9,30 @@ import { RiseWallet } from "@rise-wallet/wallet-adapter";
 import { account, databases } from "@/lib/appwrite/client";
 import { ID } from "appwrite";
 
+// ---- New Wagmi Imports & Configuration ----
+import { WagmiConfig, createClient, configureChains, chain } from 'wagmi';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
+import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { CoinbaseWalletConnector } from 'wagmi/connectors/coinbaseWallet';
+import { publicProvider } from 'wagmi/providers/public';
+
+const { chains, provider, webSocketProvider } = configureChains(
+  [chain.goerli], // using Goerli as testnet alternative
+  [publicProvider()]
+);
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+    new WalletConnectConnector({ chains, options: { qrcode: true } }),
+    new CoinbaseWalletConnector({ chains, options: { appName: 'Deepcoin' } }),
+  ],
+  provider,
+  webSocketProvider,
+});
+// ---------------------------------------------
+
 export const WalletProvider = ({ children }: PropsWithChildren) => {
   // Add plugins for non AIP 62 compliant wallets here
   const wallets = [
@@ -25,16 +49,18 @@ export const WalletProvider = ({ children }: PropsWithChildren) => {
   });
 
   return (
-    <AptosWalletAdapterProvider
-      plugins={wallets}
-      autoConnect={true}
-      dappConfig={config}
-      onError={(error) => {
-        console.log("error", error);
-      }}
-    >
-      {children}
-    </AptosWalletAdapterProvider>
+    <WagmiConfig client={wagmiClient}>
+      <AptosWalletAdapterProvider
+        plugins={wallets}
+        autoConnect={true}
+        dappConfig={config}
+        onError={(error) => {
+          console.log("error", error);
+        }}
+      >
+        {children}
+      </AptosWalletAdapterProvider>
+    </WagmiConfig>
   );
 };
 

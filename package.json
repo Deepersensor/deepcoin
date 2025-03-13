@@ -25,7 +25,8 @@
     "petra-plugin-wallet-adapter": "^0.4.5",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "wagmi": "^2.14.13"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
