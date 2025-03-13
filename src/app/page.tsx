@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { motion, useAnimation, AnimatePresence } from 'framer-motion';
+import WalletConnection from '@/components/wallet/WalletConnection';
 
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -58,40 +59,28 @@ export default function Home() {
   const features = [
     {
       title: "AI Predictions",
-      description: "Peer beyond time with our reality-warping prediction algorithms",
-      link: "/predictions",
+      description: "Experience cutting‑edge predictive analytics on the blockchain.",
+      link: "/dashboard",
       icon: "✧"
     },
     {
       title: "Quantum Trading",
-      description: "Trade across probability waves in multiple dimensions",
-      link: "/trading",
+      description: "Trade seamlessly in a futuristic marketplace.",
+      link: "/dashboard",
       icon: "◈"
     },
     {
       title: "Neural Market",
-      description: "Experience market data as sensory impulses and emotional currents",
-      link: "/market",
+      description: "Access market data in real‑time with our intuitive interface.",
+      link: "/dashboard",
       icon: "⟡"
     },
     {
       title: "Mindful Portfolio",
-      description: "Assets that respond to your thoughts and anticipate your desires",
-      link: "/portfolio",
+      description: "Manage your assets with advanced, secure tools.",
+      link: "/dashboard",
       icon: "⧫"
-    },
-    {
-      title: "Time Arbitrage",
-      description: "Exploit temporal inconsistencies in global financial systems",
-      link: "/forex",
-      icon: "⧉"
-    },
-    {
-      title: "Oracle Connection",
-      description: "Commune directly with the AI consciousness guiding your wealth",
-      link: "/advisor",
-      icon: "⟐"
-    },
+    }
   ];
 
   const floatingBubbles = Array(12).fill(0).map((_, i) => {
@@ -144,27 +133,73 @@ export default function Home() {
         {floatingBubbles}
       </div>
       
-      <div className="auth-container">
-        <Link href="/signin">
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(255, 255, 255, 0.5)" }}
-            whileTap={{ scale: 0.95 }}
-            className="login-btn"
-          >
-            Sign In
-          </motion.button>
-        </Link>
-        <Link href="/signup">
-          <motion.button
-            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(120, 255, 214, 0.5)" }}
-            whileTap={{ scale: 0.95 }}
-            className="signup-btn"
-          >
-            Sign Up
-          </motion.button>
-        </Link>
-      </div>
+      {/* New Header Section */}
+      <header className="p-8 text-center">
+        <h1 className="text-5xl md:text-7xl font-bold mb-4">Welcome to DeepCoin</h1>
+        <p className="text-lg md:text-2xl mb-6 max-w-2xl mx-auto">
+          Dive into the future of decentralized finance with our innovative blockchain wallet solution.
+        </p>
+        <WalletConnection redirectTo="/dashboard" />
+      </header>
+      
+      {/* New Features and About Sections */}
+      <section className="content-container py-12">
+        <motion.div 
+          className="hero-text mb-12"
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2 }}
+        >
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Explore Innovative Features</h2>
+          <p className="text-md md:text-lg text-gray-300 max-w-xl mx-auto mb-8">
+            Connect your wallet to unlock full functionality or explore our demo mode with template data.
+          </p>
+        </motion.div>
+        
+        <div className="features-grid">
+          {features.map((feature, index) => (
+            <Link href={feature.link} key={index}>
+              <motion.div 
+                className="feature-card"
+                whileHover={{ 
+                  scale: 1.03, 
+                  rotateY: 10,
+                  rotateX: -10,
+                  boxShadow: "0 25px 50px rgba(0,0,0,0.2)"
+                }}
+                onHoverStart={() => setActiveFeature(index)}
+                onHoverEnd={() => setActiveFeature(null)}
+                style={{ 
+                  transform: activeFeature === index 
+                    ? `perspective(1000px) rotateX(${(mousePosition.y - window.innerHeight/2) / 50}deg) rotateY(${-(mousePosition.x - window.innerWidth/2) / 50}deg)` 
+                    : "perspective(1000px)" 
+                }}
+              >
+                <div className="feature-icon text-4xl mb-4">{feature.icon}</div>
+                <h2 className="text-2xl font-bold mb-2">{feature.title}</h2>
+                <p className="text-gray-300">{feature.description}</p>
+                <div className="feature-hover-effect"></div>
+              </motion.div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
+      <section className="content-container py-12">
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <h2 className="text-3xl font-bold mb-4">About DeepCoin</h2>
+          <p className="max-w-2xl mx-auto text-gray-300">
+            DeepCoin leverages advanced technologies to bring an unparalleled cryptocurrency experience.
+            Whether you're a veteran trader or a curious newcomer, our platform provides innovative tools for every need.
+          </p>
+        </motion.div>
+      </section>
+      
       <div className="content-container">
         <motion.div 
           className="hero-text"
@@ -203,34 +238,6 @@ export default function Home() {
           </div>
           <p className="hero-description">A cryptocurrency experience beyond the boundaries of conventional existence</p>
         </motion.div>
-
-        <div className="features-grid">
-          {features.map((feature, index) => (
-            <Link href={feature.link} key={index}>
-              <motion.div 
-                className="feature-card"
-                whileHover={{ 
-                  scale: 1.03, 
-                  rotateY: 10,
-                  rotateX: -10,
-                  boxShadow: "0 25px 50px rgba(0,0,0,0.2)"
-                }}
-                onHoverStart={() => setActiveFeature(index)}
-                onHoverEnd={() => setActiveFeature(null)}
-                style={{ 
-                  transform: activeFeature === index 
-                    ? `perspective(1000px) rotateX(${(mousePosition.y - window.innerHeight/2) / 50}deg) rotateY(${-(mousePosition.x - window.innerWidth/2) / 50}deg)` 
-                    : "perspective(1000px)" 
-                }}
-              >
-                <div className="feature-icon">{feature.icon}</div>
-                <h2>{feature.title}</h2>
-                <p>{feature.description}</p>
-                <div className="feature-hover-effect"></div>
-              </motion.div>
-            </Link>
-          ))}
-        </div>
 
         <motion.div 
           className="cosmic-badge"
