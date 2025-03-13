@@ -3,10 +3,14 @@
  */
 export const truncateAddress = (address: string, startChars: number = 6, endChars: number = 4): string => {
   if (!address) return '';
-  if (address.length <= startChars + endChars) return address;
   
-  const start = address.slice(0, startChars);
-  const end = address.slice(-endChars);
+  // Convert address to string to ensure string methods will work
+  const addressStr = String(address);
+  
+  if (addressStr.length <= startChars + endChars) return addressStr;
+  
+  const start = addressStr.slice(0, startChars);
+  const end = addressStr.slice(-endChars);
   
   return `${start}...${end}`;
 };
