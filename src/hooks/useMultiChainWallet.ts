@@ -64,17 +64,20 @@ export const useMultiChainWallet = () => {
       
       if (evmConnector) {
         wagmiConnect({ connector: evmConnector });
+        // For EVM wallets with wagmi, the connection is handled asynchronously
+        // We return true immediately as the UI will update when connection state changes
         return true;
       } else {
         // Try Aptos wallet
         await aptosConnect(walletNameOrConnector);
-        return true;
+        // For Aptos wallets, we can check the connection immediately
+        return aptosConnected;
       }
     } catch (error) {
       console.error('Failed to connect wallet:', error);
       return false;
     }
-  }, [connectors, wagmiConnect, aptosConnect]);
+  }, [connectors, wagmiConnect, aptosConnect, aptosConnected]);
   
   // Disconnect current wallet
   const disconnect = useCallback(async () => {
@@ -104,6 +107,18 @@ export const useMultiChainWallet = () => {
     }
     return false;
   }, [walletData]);
+
+  // Add an auto-save effect when the wallet data changes
+  useEffect(() => {
+    const handleWalletConnection = async () => {
+      if (isConnected && walletData) {
+        console.log('Wallet connected:', walletData.walletType, walletData.address);
+        await saveWalletData();
+      }
+    };
+    
+    handleWalletConnection();
+  }, [isConnected, walletData, saveWalletData]);
   
   return {
     connect,

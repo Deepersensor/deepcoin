@@ -70,6 +70,7 @@ export default function MultiChainWalletConnection({
       
       if (success) {
         setShowWalletList(false);
+        console.log('Wallet connected successfully. Redirect path:', redirectTo);
         
         if (onConnect) {
           onConnect();
