@@ -33,6 +33,22 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  min-height: 100vh;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent-2) var(--background);
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+  background: rgba(8, 8, 25, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: var(--accent-2);
+  border-radius: 20px;
 }
 
 /* Surreal Container */
@@ -58,6 +74,19 @@ body {
   position: absolute;
   inset: 0;
   background: linear-gradient(45deg, rgba(76, 0, 255, 0.7) 0%, rgba(0, 209, 255, 0.7) 100%);
+  animation: gradientShift 20s ease infinite alternate;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .noise-overlay {
@@ -74,7 +103,7 @@ body {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 1.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,6 +131,7 @@ body {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
 .signup-btn {
@@ -117,7 +147,7 @@ body {
 }
 
 .hero-text h1 {
-  font-size: 8rem;
+  font-size: clamp(3rem, 10vw, 8rem);
   font-weight: 900;
   margin: 0;
   background: -webkit-linear-gradient(45deg, var(--accent-1), var(--accent-3));
@@ -216,30 +246,36 @@ body {
 /* Features Grid */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
   width: 100%;
-  margin-top: 5rem;
+  margin-top: 3rem;
   padding: 2rem 0;
 }
 
 .feature-card {
   background: var(--card-bg);
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
   cursor: pointer;
   position: relative;
   overflow: hidden;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   height: 100%;
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease;
   transform-style: preserve-3d;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card:hover {
+  box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.4), 
+              0 0 15px rgba(var(--accent-3), 0.2);
 }
 
 .feature-card h2 {
   font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.8rem;
   background: linear-gradient(45deg, #fff, #b0b0ff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -249,17 +285,19 @@ body {
 
 .feature-card p {
   color: rgba(232, 232, 255, 0.8);
-  font-size: 0.95rem;
+  font-size: 1rem;
   position: relative;
   z-index: 1;
+  line-height: 1.6;
 }
 
 .feature-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin-bottom: 1.2rem;
   color: var(--accent-3);
   position: relative;
   z-index: 1;
+  text-shadow: 0 0 15px rgba(0, 224, 255, 0.5);
 }
 
 .feature-hover-effect {
@@ -294,15 +332,16 @@ body {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50px;
-  padding: 0.75rem 1.5rem;
+  padding: 0.9rem 1.8rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .cosmic-circle {
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   background: conic-gradient(
     var(--accent-1),
@@ -311,6 +350,7 @@ body {
     var(--accent-1)
   );
   animation: spin 4s linear infinite;
+  box-shadow: 0 0 15px rgba(var(--accent-1), 0.3);
 }
 
 @keyframes spin {
@@ -330,39 +370,43 @@ body {
   background: rgba(8, 8, 25, 0.7);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 3rem;
-  border-radius: 1rem;
+  padding: 3.5rem;
+  border-radius: 1.5rem;
   width: 100%;
   max-width: 480px;
   position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .cosmic-input-container {
   position: relative;
   width: 100%;
+  margin-bottom: 1.5rem;
 }
 
 .cosmic-input {
   width: 100%;
-  padding: 1rem;
+  padding: 1.1rem;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 0.5rem;
+  border-radius: 0.8rem;
   color: var(--foreground);
   font-size: 1rem;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .cosmic-input:focus {
   outline: none;
   border-color: var(--accent-3);
   background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(0, 224, 255, 0.2);
 }
 
 .cosmic-input-glow {
   position: absolute;
   inset: 0;
-  border-radius: 0.5rem;
+  border-radius: 0.8rem;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -380,13 +424,26 @@ body {
 .cosmic-button {
   background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
   border: none;
-  padding: 1rem;
-  border-radius: 0.5rem;
+  padding: 1.1rem;
+  border-radius: 0.8rem;
   color: white;
   font-weight: 600;
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2), 
+              0 4px 10px rgba(0, 224, 255, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.cosmic-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3), 
+              0 6px 15px rgba(0, 224, 255, 0.3);
+}
+
+.cosmic-button:active {
+  transform: translateY(1px);
 }
 
 .cosmic-button::before {
@@ -402,7 +459,146 @@ body {
   transform: translateX(100%);
 }
 
+/* Dashboard Cards */
+.dashboard-card {
+  background: rgba(8, 8, 25, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.2rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 
+              0 0 10px rgba(var(--accent-3), 0.2);
+}
+
+.stats-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, 
+    rgba(15, 15, 35, 0.7), 
+    rgba(25, 25, 60, 0.7)
+  );
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.stats-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  background: linear-gradient(45deg, #ffffff, #b0b0ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Charts & Data Visualization */
+.chart-container {
+  width: 100%;
+  background: rgba(15, 15, 35, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 1.2rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-3));
+  z-index: 1;
+}
+
+/* Wallet Connection */
+.wallet-card {
+  background: rgba(15, 15, 35, 0.8);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+}
+
+.wallet-button {
+  background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 0.7rem;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.wallet-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Data Lists */
+.data-list {
+  border-radius: 0.8rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.data-list-item {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background-color 0.2s ease;
+}
+
+.data-list-item:last-child {
+  border-bottom: none;
+}
+
+.data-list-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Headers & Text */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-geist-sans);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+}
+
+p {
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+/* Animated Sections */
+.animated-section {
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
 /* Media Queries */
+@media (max-width: 1280px) {
+  .content-container {
+    padding: 0 1.2rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   .hero-text h1 {
     font-size: 4rem;
@@ -418,11 +614,16 @@ body {
   
   .features-grid {
     grid-template-columns: 1fr;
+    padding: 1rem 0;
   }
   
   .auth-container {
     top: 1rem;
     right: 1rem;
+  }
+  
+  .form-container {
+    padding: 2.5rem 1.5rem;
   }
 }
 
@@ -443,5 +644,17 @@ body {
   .login-btn, .signup-btn {
     padding: 0.5rem 1rem;
     font-size: 0.85rem;
+  }
+  
+  .form-container {
+    padding: 2rem 1.2rem;
+  }
+  
+  .cosmic-button {
+    padding: 0.9rem;
+  }
+  
+  .content-container {
+    padding: 0 1rem;
   }
 }
