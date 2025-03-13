@@ -1,3 +1,4 @@
+'use client';
 import { AptosWalletAdapterProvider } from "@aptos-labs/wallet-adapter-react";
 import { PropsWithChildren, useEffect } from "react";
 import { AptosConfig, Network } from "@aptos-labs/ts-sdk";
