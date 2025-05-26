@@ -16,6 +16,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import DashboardLayout from '@/components/layout/DashboardLayout';
+import AuthGuard from '@/components/auth/AuthGuard';
 import { cryptoApiService, CryptoData } from '@/lib/services/cryptoApi';
 import useMultiChainWallet from '@/hooks/useMultiChainWallet';
 
@@ -44,25 +45,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const { isConnected } = useMultiChainWallet();
   
-  const [selectedCoin, setSelectedCoin] = useState('BTC');
-  const [timeframe, setTimeframe] = useState('7d');
-  const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [conversionAmount, setConversionAmount] = useState('1000');
-  const [showApiForm, setShowApiForm] = useState(false);
-  const [apiKeys, setApiKeys] = useState([
-    { id: 1, name: 'CoinGecko API', status: 'active', expiresIn: 'Free tier' },
-    { id: 2, name: 'Blockchair API', status: 'expiring', expiresIn: '3 days' },
-  ]);
-  
-  // Redirect to sign in if wallet not connected
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/signin');
-    }
-  }, [isConnected, router]);
-
   const [selectedCoin, setSelectedCoin] = useState('BTC');
   const [timeframe, setTimeframe] = useState('7d');
   const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
@@ -172,12 +154,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <DashboardLayout>
-      {error && (
-        <div className="mb-6 p-4 bg-red-900 bg-opacity-20 border border-red-500 rounded-lg text-red-400">
-          {error}
-        </div>
-      )}
+    <AuthGuard>
+      <DashboardLayout>
+        {error && (
+          <div className="mb-6 p-4 bg-red-900 bg-opacity-20 border border-red-500 rounded-lg text-red-400">
+            {error}
+          </div>
+        )}
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Converter & API Keys */}
@@ -337,5 +320,6 @@ export default function DashboardPage() {
         </div>
       </div>
     </DashboardLayout>
+    </AuthGuard>
   );
 }
