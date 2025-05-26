@@ -1,8 +1,8 @@
 'use client';
 
+import { useState, useRef, useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
-import { motion, useAnimation, AnimatePresence } from 'framer-motion';
 import WalletConnection from '@/components/wallet/WalletConnection';
 
 export default function Home() {
@@ -27,6 +27,9 @@ export default function Home() {
       }
       
       if (orbitalsRef.current) {
+        const rect = orbitalsRef.current.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
         const children = Array.from(orbitalsRef.current.children);
         children.forEach((child, index) => {
           const factor = (index + 1) * 3;
@@ -158,29 +161,23 @@ export default function Home() {
         
         <div className="features-grid">
           {features.map((feature, index) => (
-            <Link href={feature.link} key={index}>
-              <motion.div 
-                className="feature-card"
-                whileHover={{ 
-                  scale: 1.03, 
-                  rotateY: 10,
-                  rotateX: -10,
-                  boxShadow: "0 25px 50px rgba(0,0,0,0.2)"
-                }}
-                onHoverStart={() => setActiveFeature(index)}
-                onHoverEnd={() => setActiveFeature(null)}
-                style={{ 
-                  transform: activeFeature === index 
-                    ? `perspective(1000px) rotateX(${(mousePosition.y - window.innerHeight/2) / 50}deg) rotateY(${-(mousePosition.x - window.innerWidth/2) / 50}deg)` 
-                    : "perspective(1000px)" 
-                }}
-              >
-                <div className="feature-icon text-4xl mb-4">{feature.icon}</div>
-                <h2 className="text-2xl font-bold mb-2">{feature.title}</h2>
-                <p className="text-gray-300">{feature.description}</p>
-                <div className="feature-hover-effect"></div>
-              </motion.div>
-            </Link>
+            <motion.div
+              key={index}
+              className="feature-card"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+              whileHover={{ y: -5 }}
+              onHoverStart={() => setActiveFeature(index)}
+              onHoverEnd={() => setActiveFeature(null)}
+            >
+              <div className="feature-icon text-4xl mb-4">{feature.icon}</div>
+              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              <p className="text-gray-300 mb-4">{feature.description}</p>
+              <Link href={feature.link} className="cosmic-button">
+                Explore
+              </Link>
+            </motion.div>
           ))}
         </div>
       </section>
@@ -193,9 +190,12 @@ export default function Home() {
           transition={{ delay: 0.5 }}
         >
           <h2 className="text-3xl font-bold mb-4">About DeepCoin</h2>
-          <p className="max-w-2xl mx-auto text-gray-300">
-            DeepCoin leverages advanced technologies to bring an unparalleled cryptocurrency experience.
-            Whether you're a veteran trader or a curious newcomer, our platform provides innovative tools for every need.
+          <p className="text-lg text-gray-300 max-w-3xl mx-auto">
+            DeepCoin represents the next evolution in cryptocurrency portfolio management. 
+            Our platform combines advanced AI prediction algorithms with intuitive design 
+            to help you make informed trading decisions. Whether you're a seasoned trader 
+            or just starting your crypto journey, DeepCoin provides the tools and insights 
+            you need to succeed in the digital asset space.
           </p>
         </motion.div>
       </section>

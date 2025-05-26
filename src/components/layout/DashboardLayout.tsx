@@ -3,10 +3,21 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useWallet } from '@aptos-labs/wallet-adapter-react';
-import { BellIcon, UserCircleIcon, HomeIcon, ChartBarIcon, KeyIcon, CurrencyDollarIcon, WalletIcon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  BellIcon, 
+  UserCircleIcon, 
+  HomeIcon, 
+  ChartBarIcon, 
+  KeyIcon, 
+  CurrencyDollarIcon, 
+  WalletIcon,
+  ChevronDownIcon,
+  CheckCircleIcon,
+  ExclamationTriangleIcon
+} from '@heroicons/react/24/outline';
 import { truncateAddress } from '@/lib/utils/address';
+import useMultiChainWallet from '@/hooks/useMultiChainWallet';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -15,7 +26,7 @@ interface DashboardLayoutProps {
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showWalletDropdown, setShowWalletDropdown] = useState(false);
-  const { account, wallet, disconnect } = useWallet();
+  const { disconnect, walletData, isConnected } = useMultiChainWallet();
   
   const [notifications] = useState([
     {
@@ -75,18 +86,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     const isActive = pathname === item.href;
                     
                     return (
-                      <Link 
+                      <Link
                         key={item.name}
                         href={item.href}
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-2 ${
+                          isActive
+                            ? 'bg-gray-700 text-white'
+                            : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                        }`}
                       >
-                        <div className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors
-                          ${isActive 
-                            ? 'bg-gradient-to-r from-purple-600 to-cyan-500 text-white' 
-                            : 'text-gray-300 hover:bg-gray-800 hover:bg-opacity-50 hover:text-white'
-                          }`}>
-                          <IconComponent className="h-5 w-5 mr-1.5" />
-                          {item.name}
-                        </div>
+                        <IconComponent className="h-4 w-4" />
+                        <span>{item.name}</span>
                       </Link>
                     );
                   })}
@@ -99,111 +109,107 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               {/* Notification Bell */}
               <div className="relative">
                 <motion.button
-                  className="p-2 rounded-full text-gray-300 hover:text-white focus:outline-none"
-                  onClick={() => {
-                    setShowNotifications(!showNotifications);
-                    if (showWalletDropdown) setShowWalletDropdown(false);
-                  }}
+                  className="p-2 rounded-full text-gray-300 hover:text-white focus:outline-none relative"
+                  onClick={() => setShowNotifications(!showNotifications)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span className="sr-only">View notifications</span>
                   <BellIcon className="h-6 w-6" />
-                  
-                  {/* Notification indicator */}
-                  <span className="absolute top-1 right-1 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-gray-900"></span>
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+                  )}
                 </motion.button>
                 
-                {/* Notifications dropdown */}
+                {/* Notifications Dropdown */}
                 {showNotifications && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg py-1 bg-gray-900 bg-opacity-90 backdrop-filter backdrop-blur-lg border border-gray-700 focus:outline-none z-50">
-                    <div className="px-4 py-2 border-b border-gray-800">
-                      <h3 className="text-sm font-medium text-gray-200">Notifications</h3>
+                  <motion.div 
+                    className="absolute right-0 mt-2 w-80 bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-lg rounded-lg shadow-xl border border-gray-800 z-50"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    <div className="p-4 border-b border-gray-700">
+                      <h3 className="text-lg font-semibold">Notifications</h3>
                     </div>
-                    <div className="max-h-96 overflow-y-auto">
+                    <div className="max-h-64 overflow-y-auto">
                       {notifications.map((notification) => (
-                        <div 
+                        <div
                           key={notification.id}
-                          className="px-4 py-3 hover:bg-gray-800 transition-colors border-b border-gray-800 last:border-0"
+                          className="p-4 border-b border-gray-800 hover:bg-gray-800 hover:bg-opacity-50"
                         >
-                          <div className="flex justify-between items-start">
-                            <p className="text-sm font-medium text-white">{notification.title}</p>
-                            <p className="text-xs text-gray-400">{notification.time}</p>
-                          </div>
-                          <p className="text-xs text-gray-300 mt-1">{notification.message}</p>
+                          <h4 className="font-medium text-sm">{notification.title}</h4>
+                          <p className="text-gray-400 text-xs mt-1">{notification.message}</p>
+                          <p className="text-gray-500 text-xs mt-2">{notification.time}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="px-4 py-2 border-t border-gray-800">
-                      <a href="#" className="text-xs text-cyan-400 hover:text-cyan-300 transition-colors">
-                        View all notifications
-                      </a>
-                    </div>
-                  </div>
+                  </motion.div>
                 )}
               </div>
               
               {/* Wallet dropdown */}
               <div className="relative ml-3">
                 <div>
-                  <motion.button 
+                  <motion.button
                     className="flex items-center space-x-2 p-2 rounded-full text-gray-300 hover:text-white focus:outline-none"
-                    onClick={() => {
-                      setShowWalletDropdown(!showWalletDropdown);
-                      if (showNotifications) setShowNotifications(false);
-                    }}
+                    onClick={() => setShowWalletDropdown(!showWalletDropdown)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <span className="sr-only">Open wallet menu</span>
-                    <WalletIcon className="h-6 w-6" />
-                    {account && (
-                      <span className="hidden md:inline text-sm font-medium">
-                        {truncateAddress(account.address)}
-                      </span>
+                    <WalletIcon className="h-5 w-5" />
+                    {isConnected && walletData && (
+                      <span className="text-sm">{truncateAddress(walletData.address)}</span>
                     )}
+                    <ChevronDownIcon className="h-4 w-4" />
                   </motion.button>
                 </div>
                 
-                {/* Wallet dropdown */}
+                {/* Wallet Dropdown */}
                 {showWalletDropdown && (
-                  <div className="origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg py-1 bg-gray-900 bg-opacity-90 backdrop-filter backdrop-blur-lg border border-gray-700 focus:outline-none z-50">
-                    <div className="px-4 py-3 border-b border-gray-800">
-                      <h3 className="text-sm font-medium text-gray-200">Your Wallet</h3>
-                      <div className="mt-2">
-                        <div className="flex items-center">
-                          <span className="bg-green-900 p-1 rounded-full mr-2">
-                            <WalletIcon className="h-4 w-4 text-green-400" />
-                          </span>
-                          <span className="text-sm font-medium">{wallet?.name}</span>
+                  <motion.div 
+                    className="absolute right-0 mt-2 w-64 bg-gray-900 bg-opacity-95 backdrop-filter backdrop-blur-lg rounded-lg shadow-xl border border-gray-800 z-50"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                  >
+                    {isConnected && walletData ? (
+                      <div className="p-4 space-y-3">
+                        <div className="flex items-center space-x-2">
+                          <CheckCircleIcon className="h-5 w-5 text-green-400" />
+                          <span className="text-sm text-green-400">Connected</span>
                         </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Wallet Address</p>
+                          <p className="text-sm font-mono">{truncateAddress(walletData.address)}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-gray-400">Wallet Type</p>
+                          <p className="text-sm">{walletData.walletType}</p>
+                        </div>
+                        <button
+                          onClick={handleDisconnect}
+                          className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors"
+                        >
+                          Disconnect
+                        </button>
                       </div>
-                    </div>
-                    
-                    <div className="px-4 py-3">
-                      <div className="text-xs text-gray-400 mb-1">Wallet Address</div>
-                      <div className="font-mono text-sm break-all">{account?.address}</div>
-                    </div>
-                    
-                    <div className="px-4 py-2 border-t border-gray-800">
-                      <button 
-                        onClick={handleDisconnect}
-                        className="w-full text-left text-sm text-red-400 hover:text-red-300 transition-colors"
-                      >
-                        Disconnect Wallet
-                      </button>
-                    </div>
-                  </div>
+                    ) : (
+                      <div className="p-4">
+                        <div className="flex items-center space-x-2 text-yellow-400 mb-2">
+                          <ExclamationTriangleIcon className="h-5 w-5" />
+                          <span className="text-sm">Wallet Not Connected</span>
+                        </div>
+                        <p className="text-xs text-gray-400">Please connect your wallet to continue</p>
+                      </div>
+                    )}
+                  </motion.div>
                 )}
               </div>
               
               {/* User profile icon (preserved for backward compatibility) */}
               <div className="relative ml-2">
                 <div>
-                  <button className="max-w-xs bg-gray-800 rounded-full flex items-center text-sm focus:outline-none">
-                    <span className="sr-only">Open user menu</span>
-                    <UserCircleIcon className="h-8 w-8 rounded-full text-gray-300 hover:text-white" />
-                  </button>
+                  <UserCircleIcon className="h-8 w-8 text-gray-300 hover:text-white cursor-pointer" />
                 </div>
               </div>
             </div>
@@ -221,14 +227,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center px-3 py-2 rounded-md text-base font-medium
-                    ${isActive 
-                      ? 'bg-gradient-to-r from-purple-600 to-cyan-500 text-white' 
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
-                    }`}
+                  className={`block px-3 py-2 rounded-md text-base font-medium transition-colors flex items-center space-x-2 ${
+                    isActive
+                      ? 'bg-gray-700 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
                 >
-                  <IconComponent className="h-5 w-5 mr-1.5" />
-                  {item.name}
+                  <IconComponent className="h-5 w-5" />
+                  <span>{item.name}</span>
                 </Link>
               );
             })}
@@ -252,7 +258,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="noise-overlay"></div>
         </div>
         
-        <div className="content-wrapper max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="content-wrapper max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
           {children}
         </div>
       </div>
