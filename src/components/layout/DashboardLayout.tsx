@@ -194,12 +194,18 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         </button>
                       </div>
                     ) : (
-                      <div className="p-4">
+                      <div className="p-4 space-y-3">
                         <div className="flex items-center space-x-2 text-yellow-400 mb-2">
                           <ExclamationTriangleIcon className="h-5 w-5" />
                           <span className="text-sm">Wallet Not Connected</span>
                         </div>
-                        <p className="text-xs text-gray-400">Please connect your wallet to continue</p>
+                        <p className="text-xs text-gray-400 mb-3">Please connect your wallet to continue</p>
+                        <Link
+                          href="/signin"
+                          className="block w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-cyan-600 text-white text-center text-sm rounded-lg transition-colors"
+                        >
+                          Connect Wallet
+                        </Link>
                       </div>
                     )}
                   </motion.div>

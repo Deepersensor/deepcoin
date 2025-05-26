@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,6 +17,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { cryptoApiService, CryptoData } from '@/lib/services/cryptoApi';
+import useMultiChainWallet from '@/hooks/useMultiChainWallet';
 
 // Register ChartJS components
 ChartJS.register(
@@ -39,6 +41,28 @@ const timeframes = [
 const popularCoins = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'DOT'];
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const { isConnected } = useMultiChainWallet();
+  
+  const [selectedCoin, setSelectedCoin] = useState('BTC');
+  const [timeframe, setTimeframe] = useState('7d');
+  const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [conversionAmount, setConversionAmount] = useState('1000');
+  const [showApiForm, setShowApiForm] = useState(false);
+  const [apiKeys, setApiKeys] = useState([
+    { id: 1, name: 'CoinGecko API', status: 'active', expiresIn: 'Free tier' },
+    { id: 2, name: 'Blockchair API', status: 'expiring', expiresIn: '3 days' },
+  ]);
+  
+  // Redirect to sign in if wallet not connected
+  useEffect(() => {
+    if (!isConnected) {
+      router.push('/signin');
+    }
+  }, [isConnected, router]);
+
   const [selectedCoin, setSelectedCoin] = useState('BTC');
   const [timeframe, setTimeframe] = useState('7d');
   const [cryptoData, setCryptoData] = useState<CryptoData[]>([]);

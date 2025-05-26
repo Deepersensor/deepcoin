@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import Link from 'next/link';
-import WalletConnection from '@/components/wallet/WalletConnection';
+import Navbar from '@/components/layout/Navbar';
 
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -136,13 +136,28 @@ export default function Home() {
         {floatingBubbles}
       </div>
       
-      {/* New Header Section */}
-      <header className="p-8 text-center">
+      <Navbar />
+      
+      {/* New Header Section - with padding from top for navbar */}
+      <header className="p-8 pt-24 mt-8 text-center">
         <h1 className="text-5xl md:text-7xl font-bold mb-4">Welcome to DeepCoin</h1>
         <p className="text-lg md:text-2xl mb-6 max-w-2xl mx-auto">
           Dive into the future of decentralized finance with our innovative blockchain wallet solution.
         </p>
-        <WalletConnection redirectTo="/dashboard" />
+        <div className="flex justify-center gap-4">
+          <Link 
+            href="/signup" 
+            className="py-3 px-8 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] text-lg"
+          >
+            Get Started
+          </Link>
+          <Link
+            href="#features"
+            className="py-3 px-8 bg-gray-800 bg-opacity-50 hover:bg-opacity-70 text-white font-medium border border-gray-600 rounded-lg transition-all duration-300 transform hover:scale-[1.02] text-lg"
+          >
+            Learn More
+          </Link>
+        </div>
       </header>
       
       {/* New Features and About Sections */}
