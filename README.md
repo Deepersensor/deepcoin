@@ -93,7 +93,7 @@ To learn more about the tools and technologies used in this project:
 - [Blockchair API Docs](https://blockchair.com/api)
 - [TailwindCSS](https://tailwindcss.com/docs)
 - [Movement Labs](https://movementlabs.xyz/)
-- [OKX DEX API]()
+- [OKX DEX API](https://www.okx.com/docs-v5/en/)
 - [Solana Wallet Adapter]()
 
 
