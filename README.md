@@ -14,7 +14,7 @@
 
 #### 🔗 OKX Integration
 - **OKX DEX API**: Full integration with OKX DEX for token swaps and liquidity data
-- **OKX DEX Widget**: Embedded trading interface at `/okx/widget`
+- **OKX DEX Widget**: Embedded trading interface
 - **Real-time Data**: Live market data and arbitrage opportunities
 - **Multi-chain Support**: Solana-focused with cross-chain capabilities
 
@@ -25,8 +25,7 @@ Smart contracts in assetchain repo;
 
 #### 🤖 deepcoin Copilot Features
 - **Web3 Portfolio Analysis**: Comprehensive portfolio health and diversification analysis
-- **DeFi Strategy Generation**: Risk-based AI strategies for Assetchain DeFi protocols
-- **Market Insights**: Real-time AI insights specific to Assetchain ecosystem
+- **DeFi Strategy Generation**: Risk-based AI strategies 
 - **Cross-chain Bridge Intelligence**: AI recommendations for optimal cross-chain operations
 
 ## Features
@@ -47,7 +46,7 @@ Smart contracts in assetchain repo;
    ```
 2. **Set up environment variables** (OKX API keys, Solana RPC)
 3. **Run development server**: `npm run dev`
-4. **Explore OKX features**: Visit `/okx` for the hackathon dashboard
+
 
 First, set up your environment variables:
 
