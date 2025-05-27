@@ -1,5 +1,58 @@
 # DeepCoin - AI-Powered Cryptocurrency Platform
 
+## 🏆 OKX Solana Accelerate Hackathon Submission
+
+### Tracks: Trading & AI
+
+**DeepCoin** combines advanced AI prediction algorithms with OKX DEX integration to create a comprehensive DeFi trading and portfolio management platform eligible for both the **Trading** and **AI** tracks of the OKX Solana Accelerate Hackathon.
+
+#### 🔄 Trading Track Features
+- **DEX-CEX Arbitrage Bot**: Real-time detection of price differences between OKX DEX and centralized exchanges
+- **Automated Execution**: Smart contract integration for seamless trade execution via `/api/okx/arbitrage`
+- **Risk Management**: Built-in slippage protection and position sizing
+
+#### 🤖 AI Track Features  
+- **AI Portfolio Analyzer**: Intelligent analysis of crypto holdings with optimization suggestions via `/api/okx/copilot`
+- **Smart Trading Strategies**: AI-generated strategies based on risk tolerance and market conditions
+- **DeFi Copilot**: AI assistant for optimal swap suggestions and DeFi operations
+
+#### 🔗 OKX Integration
+- **OKX DEX API**: Full integration with OKX DEX for token swaps and liquidity data
+- **OKX DEX Widget**: Embedded trading interface at `/okx/widget`
+- **Real-time Data**: Live market data and arbitrage opportunities
+- **Multi-chain Support**: Solana-focused with cross-chain capabilities
+
+### 🚀 Quick Start
+1. **Install dependencies**: 
+   ```bash
+   npm install @solana/web3.js @solana/wallet-adapter-react @solana/wallet-adapter-wallets @solana/wallet-adapter-react-ui
+   ```
+2. **Set up environment variables** (OKX API keys, Solana RPC)
+3. **Run development server**: `npm run dev`
+4. **Explore OKX features**: Visit `/okx` for the hackathon dashboard
+
+### 📊 Hackathon Demo Routes
+- `/okx` - Main OKX integration dashboard (Trading + AI tracks)
+- `/okx/widget` - OKX DEX widget integration
+- `/api/okx/arbitrage` - Arbitrage bot API (Trading track)
+- `/api/okx/copilot` - AI Copilot API (AI track)
+
+### 🛠️ Technologies Used
+- **Frontend**: Next.js 15, TypeScript, Tailwind CSS, Framer Motion
+- **Blockchain**: Solana Web3.js, OKX DEX Widget (`@okxweb3/dex-widget`)
+- **AI**: Custom prediction algorithms, portfolio optimization
+- **APIs**: OKX DEX API integration, real-time market data
+
+### 💡 Hackathon Eligibility
+- ✅ **Trading Track**: DEX-CEX arbitrage bot with OKX integration
+- ✅ **AI Track**: AI-powered trading strategies and portfolio analysis
+- ✅ **OKX API Integration**: Comprehensive use of OKX DEX tools
+- ✅ **Solana Focused**: Built for Solana ecosystem with multi-chain support
+- ✅ **Innovation**: Novel combination of AI and DeFi trading strategies
+
+---
+
+## 📝 Original Project Description
 
 # synopsis
 This is a comprehensive cryptocurrency and financial services platform built with Next.js, leveraging AI for predictive analytics and trading insights. The platform connects to the Blockchair.com API to provide real-time blockchain and cryptocurrency data.
