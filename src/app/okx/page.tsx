@@ -126,7 +126,7 @@ export default function OKXDashboard() {
         >
           <h1 className="text-4xl font-bold mb-2">OKX Integration Dashboard</h1>
           <p className="text-gray-400 mb-8">
-            Hackathon Demo: Trading Track (Arbitrage Bot) + AI Track (AI Copilot)
+             Demo: Trading Track (Arbitrage Bot) + AI Track (AI Copilot)
           </p>
           
           {/* Tab Navigation */}

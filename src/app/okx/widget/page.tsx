@@ -28,7 +28,7 @@ export default function OKXWidget() {
         
         <div className="mt-8 text-center">
           <p className="text-sm text-gray-500">
-            Powered by OKX DEX API • Hackathon Demo
+            Powered by OKX DEX API •  Demo
           </p>
         </div>
       </div>

@@ -155,7 +155,7 @@ export default function Home() {
             href="/okx"
             className="py-3 px-8 bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] text-lg"
           >
-            🚀 OKX Hackathon Demo
+            🚀 OKX Demo
           </Link>
           <Link
             href="#features"

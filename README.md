@@ -1,6 +1,6 @@
 # DeepCoin - AI-Powered Cryptocurrency Platform
 
-**DeepCoin** is a comprehensive AI-powered DeFi platform eligible for multiple hackathons, combining advanced AI prediction algorithms with blockchain integrations
+**DeepCoin** is a comprehensive AI-powered DeFi platform combining advanced AI prediction algorithms with blockchain integrations
 
 #### 🔄 Trading Track Features
 - **DEX-CEX Arbitrage Bot**: Real-time detection of price differences between OKX DEX and centralized exchanges
