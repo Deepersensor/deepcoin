@@ -12,13 +12,13 @@ export default function Home() {
   const [testAddress, setTestAddress] = useState('');
   const [testAmount, setTestAmount] = useState('');
   const [txStatus, setTxStatus] = useState('');
-  const [activeTab, setActiveTab] = useState<'solana' | 'evm'>('solana');
+  const [activeTab, setActiveTab] = useState<'solana' | 'evm' | 'services'>('solana');
   const [chainId, setChainId] = useState('1');
   const backgroundRef = useRef<HTMLDivElement>(null);
   const orbitalsRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
   
-  // Tomo integration with Solana and EVM functions
+  // Tomo integration with all functions
   const { 
     openConnectModal, 
     connected, 
@@ -33,7 +33,12 @@ export default function Home() {
     getChainId,
     signEvmMessage,
     sendEthTransaction,
-    evmRequest
+    evmRequest,
+    // Internal Wallet Services
+    openSwapModal,
+    openOnrampModal,
+    openSendModal,
+    openReceiveModal
   } = useTomo();
 
   useEffect(() => {
@@ -243,6 +248,47 @@ export default function Home() {
     }
   };
 
+  // Internal wallet services handlers
+  const handleOpenSwap = async () => {
+    try {
+      setTxStatus('Opening swap modal...');
+      await openSwapModal();
+      setTxStatus('Swap modal opened');
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleOpenOnramp = async () => {
+    try {
+      setTxStatus('Opening onramp modal...');
+      await openOnrampModal();
+      setTxStatus('Onramp modal opened');
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleOpenSend = async () => {
+    try {
+      setTxStatus('Opening send modal...');
+      await openSendModal();
+      setTxStatus('Send modal opened');
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleOpenReceive = async () => {
+    try {
+      setTxStatus('Opening receive modal...');
+      await openReceiveModal();
+      setTxStatus('Receive modal opened');
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
   return (
     <main className="surreal-container">
       <div className="background-layer" ref={backgroundRef}>
@@ -337,13 +383,23 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTab('evm')}
-                className={`flex-1 py-2 px-4 rounded-r-lg transition-colors ${
+                className={`flex-1 py-2 px-4 transition-colors ${
                   activeTab === 'evm' 
                     ? 'bg-blue-600 text-white' 
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
                 EVM Testing
+              </button>
+              <button
+                onClick={() => setActiveTab('services')}
+                className={`flex-1 py-2 px-4 rounded-r-lg transition-colors ${
+                  activeTab === 'services' 
+                    ? 'bg-green-600 text-white' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                Wallet Services
               </button>
             </div>
 
@@ -390,7 +446,7 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-            ) : (
+            ) : activeTab === 'evm' ? (
               <div>
                 <h3 className="text-xl font-semibold mb-4">EVM Transaction Testing</h3>
                 
@@ -446,10 +502,44 @@ export default function Home() {
                   </button>
                 </div>
               </div>
+            ) : (
+              <div>
+                <h3 className="text-xl font-semibold mb-4">Tomo Wallet Services</h3>
+                <p className="text-gray-300 mb-4 text-sm">
+                  These services open Tomo's built-in UI components for wallet operations.
+                </p>
+                
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={handleOpenSwap}
+                    className="py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    🔄 Swap Tokens
+                  </button>
+                  <button
+                    onClick={handleOpenOnramp}
+                    className="py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    💳 Buy Crypto
+                  </button>
+                  <button
+                    onClick={handleOpenSend}
+                    className="py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    📤 Send Tokens
+                  </button>
+                  <button
+                    onClick={handleOpenReceive}
+                    className="py-3 px-4 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    📥 Receive Tokens
+                  </button>
+                </div>
+              </div>
             )}
             
             {txStatus && (
-              <div className="p-3 bg-gray-700 border border-gray-600 rounded text-sm">
+              <div className="p-3 bg-gray-700 border border-gray-600 rounded text-sm mt-4">
                 <p className="text-gray-300 break-all">{txStatus}</p>
               </div>
             )}

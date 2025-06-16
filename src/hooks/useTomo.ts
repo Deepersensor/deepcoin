@@ -4,7 +4,9 @@ import {
   useTomoModalControl,
   useTomoWalletState,
   useTomoClientMap,
-  useTomoWalletConnect
+  useTomoWalletConnect,
+  useTomo as useTomoSDK,
+  WebWalletInvokeType
 } from '@tomo-inc/tomo-web-sdk';
 import bs58 from 'bs58';
 import BigNumber from 'bignumber.js';
@@ -16,6 +18,7 @@ export function useTomo() {
   const tomoWalletState = useTomoWalletState();
   const tomoClientMap = useTomoClientMap();
   const tomoWalletConnect = useTomoWalletConnect();
+  const { tomoSDK } = useTomoSDK();
 
   // Solana provider functions following the guide
   const signMessage = async (message: string) => {
@@ -139,6 +142,19 @@ export function useTomo() {
     return await ethereumProvider.request({ method, params });
   };
 
+  // Internal Wallet Services following the integration guide
+  const handleWebWalletInvoke = async (type: WebWalletInvokeType) => {
+    if (!tomoSDK) {
+      throw new Error('Tomo SDK not available');
+    }
+    return tomoSDK.handleWebWalletInvoke(type);
+  };
+
+  const openSwapModal = () => handleWebWalletInvoke(WebWalletInvokeType.SWAP);
+  const openOnrampModal = () => handleWebWalletInvoke(WebWalletInvokeType.ONRAMP);
+  const openSendModal = () => handleWebWalletInvoke(WebWalletInvokeType.SEND);
+  const openReceiveModal = () => handleWebWalletInvoke(WebWalletInvokeType.RECEIVE);
+
   return {
     opened: tomoModal.open,
     openConnectModal: tomoModalControl.open,
@@ -165,6 +181,13 @@ export function useTomo() {
     signTypedData,
     sendEvmTransaction,
     sendEthTransaction,
-    evmRequest
+    evmRequest,
+    // Internal Wallet Services
+    handleWebWalletInvoke,
+    openSwapModal,
+    openOnrampModal,
+    openSendModal,
+    openReceiveModal,
+    WebWalletInvokeType
   };
 }
