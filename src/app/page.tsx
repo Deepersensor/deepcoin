@@ -4,13 +4,37 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
+import { useTomo } from '@/hooks/useTomo';
 
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [activeFeature, setActiveFeature] = useState<number | null>(null);
+  const [testAddress, setTestAddress] = useState('');
+  const [testAmount, setTestAmount] = useState('');
+  const [txStatus, setTxStatus] = useState('');
+  const [activeTab, setActiveTab] = useState<'solana' | 'evm'>('solana');
+  const [chainId, setChainId] = useState('1');
   const backgroundRef = useRef<HTMLDivElement>(null);
   const orbitalsRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
+  
+  // Tomo integration with Solana and EVM functions
+  const { 
+    openConnectModal, 
+    connected, 
+    disconnect, 
+    solanaAddress,
+    evmAddress,
+    signMessage,
+    sendSolTransaction,
+    sendSplTokenTransaction,
+    // EVM functions
+    switchChain,
+    getChainId,
+    signEvmMessage,
+    sendEthTransaction,
+    evmRequest
+  } = useTomo();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -125,6 +149,100 @@ export default function Home() {
     );
   });
 
+  // Solana transaction handlers following the guide
+  const handleSignMessage = async () => {
+    try {
+      setTxStatus('Signing message...');
+      const signature = await signMessage('hello world');
+      setTxStatus(`Message signed: ${signature}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleSendSol = async () => {
+    if (!testAddress || !testAmount) {
+      setTxStatus('Please enter address and amount');
+      return;
+    }
+    
+    try {
+      setTxStatus('Sending SOL transaction...');
+      const signature = await sendSolTransaction(testAddress, parseFloat(testAmount));
+      setTxStatus(`SOL sent! Signature: ${signature}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleSendUSDT = async () => {
+    if (!testAddress || !testAmount) {
+      setTxStatus('Please enter address and amount');
+      return;
+    }
+    
+    try {
+      setTxStatus('Sending USDT transaction...');
+      const usdtMintAddress = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB';
+      const signature = await sendSplTokenTransaction(testAddress, parseFloat(testAmount), usdtMintAddress, 6);
+      setTxStatus(`USDT sent! Signature: ${signature}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  // EVM transaction handlers following the guide
+  const handleSignEvmMessage = async () => {
+    if (!evmAddress) {
+      setTxStatus('EVM address not available');
+      return;
+    }
+    
+    try {
+      setTxStatus('Signing EVM message...');
+      const signature = await signEvmMessage('hello world', evmAddress);
+      setTxStatus(`EVM message signed: ${signature}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleSwitchChain = async () => {
+    try {
+      setTxStatus(`Switching to chain ${chainId}...`);
+      await switchChain(chainId);
+      const currentChain = await getChainId();
+      setTxStatus(`Switched to chain: ${currentChain}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleSendEth = async () => {
+    if (!testAddress || !testAmount) {
+      setTxStatus('Please enter address and amount');
+      return;
+    }
+    
+    try {
+      setTxStatus('Sending ETH transaction...');
+      const signature = await sendEthTransaction(testAddress, parseFloat(testAmount));
+      setTxStatus(`ETH sent! Signature: ${signature}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleGetAccounts = async () => {
+    try {
+      setTxStatus('Getting accounts...');
+      const accounts = await evmRequest('eth_accounts');
+      setTxStatus(`Accounts: ${JSON.stringify(accounts)}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
   return (
     <main className="surreal-container">
       <div className="background-layer" ref={backgroundRef}>
@@ -138,13 +256,51 @@ export default function Home() {
       
       <Navbar />
       
-      {/* New Header Section - with padding from top for navbar */}
+      {/* Updated Header Section with Tomo integration */}
       <header className="p-8 pt-24 mt-8 text-center">
         <h1 className="text-5xl md:text-7xl font-bold mb-4">Welcome to DeepCoin</h1>
         <p className="text-lg md:text-2xl mb-6 max-w-2xl mx-auto">
           Dive into the future of decentralized finance with our innovative blockchain wallet solution.
         </p>
+        
+        {/* Wallet connection status */}
+        {connected && (
+          <div className="mb-4 space-y-2">
+            {solanaAddress && (
+              <div className="p-3 bg-green-600 bg-opacity-20 border border-green-500 rounded-lg inline-block mr-2">
+                <p className="text-green-300">
+                  Solana: {solanaAddress.slice(0, 8)}...{solanaAddress.slice(-8)}
+                </p>
+              </div>
+            )}
+            {evmAddress && (
+              <div className="p-3 bg-blue-600 bg-opacity-20 border border-blue-500 rounded-lg inline-block">
+                <p className="text-blue-300">
+                  EVM: {evmAddress.slice(0, 8)}...{evmAddress.slice(-8)}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+        
         <div className="flex justify-center gap-4">
+          {/* Tomo Connect/Disconnect Button */}
+          {!connected ? (
+            <button
+              onClick={openConnectModal}
+              className="py-3 px-8 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] text-lg"
+            >
+              🔗 Connect Wallet
+            </button>
+          ) : (
+            <button
+              onClick={disconnect}
+              className="py-3 px-8 bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] text-lg"
+            >
+              🔌 Disconnect
+            </button>
+          )}
+          
           <Link 
             href="/signup" 
             className="py-3 px-8 bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white font-medium rounded-lg transition-all duration-300 transform hover:scale-[1.02] text-lg"
@@ -164,6 +320,141 @@ export default function Home() {
             Learn More
           </Link>
         </div>
+
+        {/* Transaction Testing Section */}
+        {connected && (
+          <div className="mt-8 p-6 bg-gray-800 bg-opacity-50 border border-gray-600 rounded-lg max-w-2xl mx-auto">
+            <div className="flex mb-6">
+              <button
+                onClick={() => setActiveTab('solana')}
+                className={`flex-1 py-2 px-4 rounded-l-lg transition-colors ${
+                  activeTab === 'solana' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                Solana Testing
+              </button>
+              <button
+                onClick={() => setActiveTab('evm')}
+                className={`flex-1 py-2 px-4 rounded-r-lg transition-colors ${
+                  activeTab === 'evm' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                EVM Testing
+              </button>
+            </div>
+
+            {activeTab === 'solana' ? (
+              <div>
+                <h3 className="text-xl font-semibold mb-4">Solana Transaction Testing</h3>
+                
+                <div className="space-y-3 mb-4">
+                  <input
+                    type="text"
+                    placeholder="Recipient address"
+                    value={testAddress}
+                    onChange={(e) => setTestAddress(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Amount"
+                    value={testAmount}
+                    onChange={(e) => setTestAmount(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                    step="0.000001"
+                  />
+                </div>
+                
+                <div className="flex gap-2 mb-4">
+                  <button
+                    onClick={handleSignMessage}
+                    className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+                  >
+                    Sign Message
+                  </button>
+                  <button
+                    onClick={handleSendSol}
+                    className="flex-1 py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded transition-colors"
+                  >
+                    Send SOL
+                  </button>
+                  <button
+                    onClick={handleSendUSDT}
+                    className="flex-1 py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                  >
+                    Send USDT
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-xl font-semibold mb-4">EVM Transaction Testing</h3>
+                
+                <div className="space-y-3 mb-4">
+                  <input
+                    type="text"
+                    placeholder="Recipient address"
+                    value={testAddress}
+                    onChange={(e) => setTestAddress(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Amount (ETH)"
+                    value={testAmount}
+                    onChange={(e) => setTestAmount(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                    step="0.000001"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Chain ID (1 for Ethereum)"
+                    value={chainId}
+                    onChange={(e) => setChainId(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  />
+                </div>
+                
+                <div className="grid grid-cols-2 gap-2 mb-4">
+                  <button
+                    onClick={handleSignEvmMessage}
+                    className="py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded transition-colors"
+                  >
+                    Sign Message
+                  </button>
+                  <button
+                    onClick={handleSwitchChain}
+                    className="py-2 px-4 bg-orange-600 hover:bg-orange-700 text-white rounded transition-colors"
+                  >
+                    Switch Chain
+                  </button>
+                  <button
+                    onClick={handleSendEth}
+                    className="py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded transition-colors"
+                  >
+                    Send ETH
+                  </button>
+                  <button
+                    onClick={handleGetAccounts}
+                    className="py-2 px-4 bg-green-600 hover:bg-green-700 text-white rounded transition-colors"
+                  >
+                    Get Accounts
+                  </button>
+                </div>
+              </div>
+            )}
+            
+            {txStatus && (
+              <div className="p-3 bg-gray-700 border border-gray-600 rounded text-sm">
+                <p className="text-gray-300 break-all">{txStatus}</p>
+              </div>
+            )}
+          </div>
+        )}
       </header>
       
       {/* New Features and About Sections */}

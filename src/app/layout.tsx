@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import WalletProvider from "@/provider/WalletProvider";
+import TomoProvider from "@/components/providers/TomoProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Deepcoin | Reality-Bending Crypto",
-  description: "Where cryptocurrency meets the edge of perception. AI-powered crypto analytics beyond reality.",
+  description:
+    "Where cryptocurrency meets the edge of perception. AI-powered crypto analytics beyond reality.",
 };
 
 export default function RootLayout({
@@ -36,7 +38,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <WalletProvider>
-          {children}
+          <TomoProvider>{children}</TomoProvider>
         </WalletProvider>
       </body>
     </html>
