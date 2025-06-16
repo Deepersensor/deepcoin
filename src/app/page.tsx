@@ -5,6 +5,8 @@ import { motion, useAnimation } from 'framer-motion';
 import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import { useTomo } from '@/hooks/useTomo';
+import { useDebridge } from '@/hooks/useDebridge';
+import { ChainId } from '@debridge-finance/dln-client';
 
 export default function Home() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -12,8 +14,10 @@ export default function Home() {
   const [testAddress, setTestAddress] = useState('');
   const [testAmount, setTestAmount] = useState('');
   const [txStatus, setTxStatus] = useState('');
-  const [activeTab, setActiveTab] = useState<'solana' | 'evm' | 'services'>('solana');
+  const [activeTab, setActiveTab] = useState<'solana' | 'evm' | 'services' | 'debridge'>('solana');
   const [chainId, setChainId] = useState('1');
+  const [agentId, setAgentId] = useState('');
+  const [serviceType, setServiceType] = useState('analysis');
   const backgroundRef = useRef<HTMLDivElement>(null);
   const orbitalsRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
@@ -40,6 +44,18 @@ export default function Home() {
     openSendModal,
     openReceiveModal
   } = useTomo();
+
+  // deBridge integration
+  const {
+    loading: debridgeLoading,
+    error: debridgeError,
+    crossChainTransfer,
+    payAIAgent,
+    distributeRoyalties,
+    getOrderStatus,
+    SUPPORTED_CHAINS,
+    clearError
+  } = useDebridge();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -289,6 +305,82 @@ export default function Home() {
     }
   };
 
+  // deBridge handlers
+  const handleCrossChainTransfer = async () => {
+    if (!testAddress || !testAmount) {
+      setTxStatus('Please enter address and amount');
+      return;
+    }
+
+    try {
+      setTxStatus('Creating cross-chain transfer...');
+      const order = await crossChainTransfer({
+        srcChainId: ChainId.Ethereum,
+        dstChainId: ChainId.Polygon,
+        srcTokenAddress: '0xA0b86a33E6417c9a2c5b7E6c7BD99b7aB8b0c8f1', // Example USDC
+        dstTokenAddress: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', // USDC on Polygon
+        amount: testAmount,
+        receiverAddress: testAddress,
+        senderAddress: evmAddress || '',
+      });
+      setTxStatus(`Cross-chain order created: ${order.orderId}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleAIAgentPayment = async () => {
+    if (!agentId || !testAmount) {
+      setTxStatus('Please enter agent ID and amount');
+      return;
+    }
+
+    try {
+      setTxStatus('Processing AI agent payment...');
+      const payment = await payAIAgent({
+        agentId,
+        serviceType,
+        amount: testAmount,
+        tokenAddress: '0xA0b86a33E6417c9a2c5b7E6c7BD99b7aB8b0c8f1', // USDC
+        chainId: ChainId.Ethereum,
+        recipientAddress: testAddress || '0x742d35Cc6AB26e26f7E5B68B0C6e7e8F3E8E2f3A', // Default AI agent address
+      });
+      setTxStatus(`AI Agent payment processed: ${payment.orderId}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleRoyaltyDistribution = async () => {
+    try {
+      setTxStatus('Distributing cross-chain royalties...');
+      const royalties = [
+        {
+          recipient: '0x742d35Cc6AB26e26f7E5B68B0C6e7e8F3E8E2f3A',
+          amount: '100',
+          chainId: ChainId.Polygon,
+          tokenAddress: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+        },
+        {
+          recipient: '0x8ba1f109551bD432803012645Hac136c5e1A1B',
+          amount: '50',
+          chainId: ChainId.Arbitrum,
+          tokenAddress: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
+        },
+      ];
+
+      const orders = await distributeRoyalties(
+        royalties,
+        ChainId.Ethereum,
+        '0xA0b86a33E6417c9a2c5b7E6c7BD99b7aB8b0c8f1',
+        evmAddress || ''
+      );
+      setTxStatus(`Royalty distribution orders: ${orders.map(o => o.orderId).join(', ')}`);
+    } catch (error) {
+      setTxStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
   return (
     <main className="surreal-container">
       <div className="background-layer" ref={backgroundRef}>
@@ -302,7 +394,7 @@ export default function Home() {
       
       <Navbar />
       
-      {/* Updated Header Section with Tomo integration */}
+      {/* Updated Header Section with deBridge integration */}
       <header className="p-8 pt-24 mt-8 text-center">
         <h1 className="text-5xl md:text-7xl font-bold mb-4">Welcome to DeepCoin</h1>
         <p className="text-lg md:text-2xl mb-6 max-w-2xl mx-auto">
@@ -393,13 +485,23 @@ export default function Home() {
               </button>
               <button
                 onClick={() => setActiveTab('services')}
-                className={`flex-1 py-2 px-4 rounded-r-lg transition-colors ${
+                className={`flex-1 py-2 px-4 transition-colors ${
                   activeTab === 'services' 
                     ? 'bg-green-600 text-white' 
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
                 Wallet Services
+              </button>
+              <button
+                onClick={() => setActiveTab('debridge')}
+                className={`flex-1 py-2 px-4 rounded-r-lg transition-colors ${
+                  activeTab === 'debridge' 
+                    ? 'bg-orange-600 text-white' 
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                deBridge
               </button>
             </div>
 
@@ -502,7 +604,7 @@ export default function Home() {
                   </button>
                 </div>
               </div>
-            ) : (
+            ) : activeTab === 'services' ? (
               <div>
                 <h3 className="text-xl font-semibold mb-4">Tomo Wallet Services</h3>
                 <p className="text-gray-300 mb-4 text-sm">
@@ -535,6 +637,84 @@ export default function Home() {
                     📥 Receive Tokens
                   </button>
                 </div>
+              </div>
+            ) : (
+              <div>
+                <h3 className="text-xl font-semibold mb-4">deBridge Cross-Chain Services</h3>
+                <p className="text-gray-300 mb-4 text-sm">
+                  Cross-chain transfers, AI agent payments, and royalty distribution.
+                </p>
+                
+                <div className="space-y-3 mb-4">
+                  <input
+                    type="text"
+                    placeholder="Recipient address"
+                    value={testAddress}
+                    onChange={(e) => setTestAddress(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Amount (USDC)"
+                    value={testAmount}
+                    onChange={(e) => setTestAmount(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                    step="0.01"
+                  />
+                  <input
+                    type="text"
+                    placeholder="AI Agent ID"
+                    value={agentId}
+                    onChange={(e) => setAgentId(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  />
+                  <select
+                    value={serviceType}
+                    onChange={(e) => setServiceType(e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                  >
+                    <option value="analysis">Portfolio Analysis</option>
+                    <option value="prediction">Price Prediction</option>
+                    <option value="strategy">Trading Strategy</option>
+                    <option value="advisory">Financial Advisory</option>
+                  </select>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-3">
+                  <button
+                    onClick={handleCrossChainTransfer}
+                    disabled={debridgeLoading}
+                    className="py-3 px-4 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 disabled:opacity-50 text-white rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    🌉 Cross-Chain Transfer
+                  </button>
+                  <button
+                    onClick={handleAIAgentPayment}
+                    disabled={debridgeLoading}
+                    className="py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 text-white rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    🤖 Pay AI Agent (deTips)
+                  </button>
+                  <button
+                    onClick={handleRoyaltyDistribution}
+                    disabled={debridgeLoading}
+                    className="py-3 px-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 text-white rounded-lg transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    💰 Distribute Royalties
+                  </button>
+                </div>
+
+                {debridgeError && (
+                  <div className="mt-3 p-3 bg-red-600 bg-opacity-20 border border-red-500 rounded text-sm">
+                    <p className="text-red-300">{debridgeError}</p>
+                    <button
+                      onClick={clearError}
+                      className="mt-2 text-red-400 hover:text-red-300 underline"
+                    >
+                      Clear Error
+                    </button>
+                  </div>
+                )}
               </div>
             )}
             

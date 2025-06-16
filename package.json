@@ -12,6 +12,7 @@
     "@aptos-labs/ts-sdk": "^1.35.0",
     "@aptos-labs/wallet-adapter-react": "^4.1.2",
     "@coinbase/wallet-sdk": "^4.3.0",
+    "@debridge-finance/dln-client": "^17.6.2",
     "@heroicons/react": "^2.2.0",
     "@keyv/redis": "^4.3.1",
     "@martianwallet/aptos-wallet-adapter": "^0.0.5",
