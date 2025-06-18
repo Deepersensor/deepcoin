@@ -25,6 +25,14 @@ interface CryptoData {
   priceHistory: number[];
   predictedPrice?: number;
   predictionAccuracy?: number;
+  paymasterSupported?: boolean; // New field for paymaster support
+}
+
+interface PaymasterGasEstimate {
+  estimatedCost: number;
+  freeGasAvailable: boolean;
+  supportedTokens: string[];
+  recommendedPaymentType: 0 | 1 | 2;
 }
 
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
@@ -43,15 +51,16 @@ const SYMBOL_TO_ID_MAP: { [key: string]: string } = {
   AVAX: 'avalanche-2',
   LINK: 'chainlink',
   UNI: 'uniswap',
+  NERO: 'nero-chain', // Add NERO token support
 };
 
 export class CryptoApiService {
   private readonly baseUrl = COINGECKO_API_URL;
 
   /**
-   * Get current prices for multiple cryptocurrencies
+   * Get current prices for multiple cryptocurrencies with paymaster support info
    */
-  async getCryptoPrices(symbols: string[]): Promise<CryptoData[]> {
+  async getCryptoPrices(symbols: string[], includePaymasterInfo = false): Promise<CryptoData[]> {
     try {
       // Convert symbols to CoinGecko IDs
       const ids = symbols.map(symbol => SYMBOL_TO_ID_MAP[symbol.toUpperCase()] || symbol.toLowerCase()).join(',');
@@ -82,6 +91,7 @@ export class CryptoApiService {
             marketCap: Math.random() * 1000000000000,
             volume24h: Math.random() * 50000000000,
             priceHistory: Array(30).fill(0).map(() => Math.random() * 50000 + 1000),
+            paymasterSupported: includePaymasterInfo && this.isPaymasterSupportedToken(symbol),
           };
         }
 
@@ -93,6 +103,7 @@ export class CryptoApiService {
           marketCap: priceData.usd_market_cap || 0,
           volume24h: priceData.usd_24h_vol || 0,
           priceHistory: [], // Will be filled by getHistoricalData
+          paymasterSupported: includePaymasterInfo && this.isPaymasterSupportedToken(symbol),
         };
       });
     } catch (error) {
@@ -107,8 +118,39 @@ export class CryptoApiService {
         marketCap: Math.random() * 1000000000000,
         volume24h: Math.random() * 50000000000,
         priceHistory: Array(30).fill(0).map(() => Math.random() * 50000 + 1000),
+        paymasterSupported: includePaymasterInfo && this.isPaymasterSupportedToken(symbol),
       }));
     }
+  }
+
+  /**
+   * Estimate gas costs with paymaster options
+   */
+  async estimateGasWithPaymaster(
+    walletAddress: string,
+    txType: 'transfer' | 'swap' | 'nft' = 'transfer'
+  ): Promise<PaymasterGasEstimate> {
+    try {
+      // This would integrate with your paymaster hook
+      // For now, return mock data
+      return {
+        estimatedCost: 0.002, // ETH equivalent
+        freeGasAvailable: true,
+        supportedTokens: ['USDC', 'DAI', 'NERO'],
+        recommendedPaymentType: 0, // Free gas recommended
+      };
+    } catch (error) {
+      console.error('Error estimating gas with paymaster:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if a token is supported by NERO paymaster
+   */
+  private isPaymasterSupportedToken(symbol: string): boolean {
+    const supportedTokens = ['USDC', 'DAI', 'USDT', 'NERO', 'ETH'];
+    return supportedTokens.includes(symbol.toUpperCase());
   }
 
   /**
@@ -202,6 +244,7 @@ export class CryptoApiService {
       AVAX: 'Avalanche',
       LINK: 'Chainlink',
       UNI: 'Uniswap',
+      NERO: 'NERO Chain',
     };
     
     return names[symbol.toUpperCase()] || symbol.toUpperCase();
