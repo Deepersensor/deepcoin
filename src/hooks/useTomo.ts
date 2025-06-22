@@ -1,10 +1,4 @@
 import { 
-  useAtomValue,
-  tomoModalAtom,
-  useTomoModalControl,
-  useTomoWalletState,
-  useTomoClientMap,
-  useTomoWalletConnect,
   useTomo as useTomoSDK,
   WebWalletInvokeType
 } from '@tomo-inc/tomo-web-sdk';
@@ -13,16 +7,11 @@ import BigNumber from 'bignumber.js';
 import { createSolTx, getConnection } from '@/utils/solana';
 
 export function useTomo() {
-  const tomoModal = useAtomValue(tomoModalAtom);
-  const tomoModalControl = useTomoModalControl();
-  const tomoWalletState = useTomoWalletState();
-  const tomoClientMap = useTomoClientMap();
-  const tomoWalletConnect = useTomoWalletConnect();
-  const { tomoSDK } = useTomoSDK();
+  const { tomoSDK, walletState, providers } = useTomoSDK();
 
   // Solana provider functions following the guide
   const signMessage = async (message: string) => {
-    const { solanaProvider } = tomoClientMap;
+    const { solanaProvider } = providers || {};
     if (!solanaProvider) throw new Error('Solana provider not available');
     
     const res = await solanaProvider.signMessage(new TextEncoder().encode(message));
@@ -30,7 +19,7 @@ export function useTomo() {
   };
 
   const signTransaction = async (fromAddress: string, toAddress: string, amount: number, mintAddress?: string) => {
-    const { solanaProvider } = tomoClientMap;
+    const { solanaProvider } = providers || {};
     if (!solanaProvider) throw new Error('Solana provider not available');
     
     const transaction = await createSolTx(fromAddress, toAddress, amount, mintAddress);
@@ -41,7 +30,7 @@ export function useTomo() {
   };
 
   const sendTransaction = async (fromAddress: string, toAddress: string, amount: number, mintAddress?: string) => {
-    const { solanaProvider } = tomoClientMap;
+    const { solanaProvider } = providers || {};
     if (!solanaProvider) throw new Error('Solana provider not available');
     
     const transaction = await createSolTx(fromAddress, toAddress, amount, mintAddress);
@@ -53,43 +42,43 @@ export function useTomo() {
   };
 
   const sendSolTransaction = async (toAddress: string, amount: number) => {
-    const from = tomoWalletState.solanaAddress || '';
+    const from = walletState?.solanaAddress || '';
     const decimals = 9;
     const lamports = Number(new BigNumber(amount).shiftedBy(decimals));
     return await sendTransaction(from, toAddress, lamports);
   };
 
   const sendSplTokenTransaction = async (toAddress: string, amount: number, tokenMintAddress: string, decimals: number = 6) => {
-    const from = tomoWalletState.solanaAddress || '';
+    const from = walletState?.solanaAddress || '';
     const tokenAmount = Number(new BigNumber(amount).shiftedBy(decimals));
     return await sendTransaction(from, toAddress, tokenAmount, tokenMintAddress);
   };
 
   // EVM provider functions following the guide
   const switchChain = async (chainId: string) => {
-    const { ethereumProvider } = tomoClientMap;
+    const { ethereumProvider } = providers || {};
     if (!ethereumProvider) throw new Error('Ethereum provider not available');
     
     return await ethereumProvider.switchChain(chainId);
   };
 
   const getChainId = async () => {
-    const { ethereumProvider } = tomoClientMap;
+    const { ethereumProvider } = providers || {};
     if (!ethereumProvider) throw new Error('Ethereum provider not available');
     
     return await ethereumProvider.getChainId();
   };
 
   const getEvmAddress = async () => {
-    const { ethereumProvider } = tomoClientMap;
+    const { ethereumProvider } = providers || {};
     if (!ethereumProvider) throw new Error('Ethereum provider not available');
     
     const accounts = await ethereumProvider.request({ method: "eth_accounts" });
-    return accounts?.[0] || tomoWalletState.address;
+    return accounts?.[0] || walletState?.address;
   };
 
   const signEvmMessage = async (message: string, address: string) => {
-    const { ethereumProvider } = tomoClientMap;
+    const { ethereumProvider } = providers || {};
     if (!ethereumProvider) throw new Error('Ethereum provider not available');
     
     return await ethereumProvider.request({
@@ -99,7 +88,7 @@ export function useTomo() {
   };
 
   const signTypedData = async (address: string, typedData: string) => {
-    const { ethereumProvider } = tomoClientMap;
+    const { ethereumProvider } = providers || {};
     if (!ethereumProvider) throw new Error('Ethereum provider not available');
     
     return await ethereumProvider.request({
@@ -118,14 +107,14 @@ export function useTomo() {
     maxPriorityFeePerGas?: string;
     data?: string;
   }) => {
-    const { ethereumProvider } = tomoClientMap;
+    const { ethereumProvider } = providers || {};
     if (!ethereumProvider) throw new Error('Ethereum provider not available');
     
     return await ethereumProvider.sendTransaction(params);
   };
 
   const sendEthTransaction = async (toAddress: string, amount: number) => {
-    const fromAddress = tomoWalletState.address || '';
+    const fromAddress = walletState?.address || '';
     const valueInWei = (amount * 1e18).toString(16);
     
     return await sendEvmTransaction({
@@ -136,7 +125,7 @@ export function useTomo() {
   };
 
   const evmRequest = async (method: string, params?: any[]) => {
-    const { ethereumProvider } = tomoClientMap;
+    const { ethereumProvider } = providers || {};
     if (!ethereumProvider) throw new Error('Ethereum provider not available');
     
     return await ethereumProvider.request({ method, params });
@@ -156,17 +145,10 @@ export function useTomo() {
   const openReceiveModal = () => handleWebWalletInvoke(WebWalletInvokeType.RECEIVE);
 
   return {
-    opened: tomoModal.open,
-    openConnectModal: tomoModalControl.open,
-    closeConnectModal: tomoModalControl.close,
-    connected: tomoWalletState.isConnection,
-    disconnect: tomoWalletConnect.disconnect,
-    solanaAddress: tomoWalletState.solanaAddress,
-    evmAddress: tomoWalletState.address,
-    providers: {
-      solanaProvider: tomoClientMap.solanaProvider,
-      ethereumProvider: tomoClientMap.ethereumProvider
-    },
+    connected: walletState?.isConnected || false,
+    solanaAddress: walletState?.solanaAddress,
+    evmAddress: walletState?.address,
+    providers: providers || {},
     // Solana functions
     signMessage,
     signTransaction,

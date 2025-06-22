@@ -1,9 +1,7 @@
-import { DlnClient, ChainId, OrderStatus } from '@debridge-finance/dln-client';
+import { CommonDlnClient, ChainId } from '@debridge-finance/dln-client';
 
 // Initialize deBridge DLN client
-const dlnClient = new DlnClient({
-  environment: 'production', // or 'staging' for testing
-});
+const dlnClient = new CommonDlnClient({});
 
 // Supported chains for deBridge
 export const SUPPORTED_CHAINS = {
