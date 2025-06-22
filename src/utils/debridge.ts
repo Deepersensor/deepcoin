@@ -1,8 +1,5 @@
 import { CommonDlnClient, ChainId } from '@debridge-finance/dln-client';
 
-// Initialize deBridge DLN client
-const dlnClient = new CommonDlnClient({});
-
 // Supported chains for deBridge
 export const SUPPORTED_CHAINS = {
   ETHEREUM: ChainId.Ethereum,
@@ -35,6 +32,7 @@ export interface AIAgentPaymentParams {
 // Get supported tokens for cross-chain transfer
 export async function getSupportedTokens(chainId: ChainId) {
   try {
+    const dlnClient = new CommonDlnClient({});
     const tokens = await dlnClient.getSupportedTokens(chainId);
     return tokens;
   } catch (error) {
@@ -46,6 +44,7 @@ export async function getSupportedTokens(chainId: ChainId) {
 // Create cross-chain transfer order
 export async function createCrossChainOrder(params: CrossChainTransferParams) {
   try {
+    const dlnClient = new CommonDlnClient({});
     const orderParams = {
       srcChainId: params.srcChainId,
       dstChainId: params.dstChainId,
@@ -67,6 +66,7 @@ export async function createCrossChainOrder(params: CrossChainTransferParams) {
 // Track order status
 export async function trackOrderStatus(orderId: string) {
   try {
+    const dlnClient = new CommonDlnClient({});
     const status = await dlnClient.getOrderStatus(orderId);
     return status;
   } catch (error) {
@@ -151,6 +151,7 @@ export async function distributeCrossChainRoyalties(
 // Get estimated fees for cross-chain transfer
 export async function getTransferFees(params: CrossChainTransferParams) {
   try {
+    const dlnClient = new CommonDlnClient({});
     const fees = await dlnClient.getOrderFees({
       srcChainId: params.srcChainId,
       dstChainId: params.dstChainId,
