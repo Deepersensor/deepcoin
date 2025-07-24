@@ -1,6 +1,16 @@
 # DeepCoin - AI-Powered Cryptocurrency Platform
 
-**DeepCoin** is a comprehensive AI-powered DeFi platform combining advanced AI prediction algorithms with blockchain integrations
+**DeepCoin** is a comprehensive AI-powered DeFi platform combining advanced AI prediction algorithms with blockchain integrations for real-time trading, portfolio management, and market analysis. It features a user-friendly interface for both novice and experienced traders, offering tools for crypto trading, forex trading, and AI financial advisory.
+
+## Integrations
+
+### Recall Integration
+
+Integrates with the Recall Network for automated crypto-trading, enabling portfolio management, trade execution, and competition participation.
+
+### io.net Integration
+
+Integrates with io.net, a decentralized GPU network, to leverage its resources for various application tasks.
 
 #### 🌟 Aptos integration
 for real-time trading, portfolio management, and market analysis. It features a user-friendly interface for both novice and experienced traders, offering tools for crypto trading, forex trading, and AI financial advisory.
@@ -89,16 +99,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## API Integration
 
 This project uses the [Blockchair API](https://blockchair.com/api) to fetch real-time blockchain data. You'll need to sign up for an API key and add it to your `.env.local` file.
-
-## Integrations
-
-### Recall Integration
-
-The application integrates with the Recall Network, a platform for automated crypto-trading agents. This allows for portfolio management, trade execution, and participation in trading competitions. For more information, see the `src/integrations/recall/README.md` file.
-
-### io.net Integration
-
-The application integrates with io.net, a decentralized GPU network. This allows the application to leverage io.net's resources for various tasks. For more information, see the `src/integrations/io.net/README.md` file.
 
 ## AI Models
 
