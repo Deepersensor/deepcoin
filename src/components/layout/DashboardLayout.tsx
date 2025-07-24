@@ -54,8 +54,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navItems = [
     { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
     { name: 'Predictions', href: '/predictions', icon: ChartBarIcon },
-    { name: 'API Keys', href: '/dashboard/api-keys', icon: KeyIcon },
-    { name: 'Converter', href: '/dashboard/converter', icon: CurrencyDollarIcon },
+    { name: 'API Keys', href: '/dashboard#api-keys', icon: KeyIcon },
+    { name: 'Converter', href: '/dashboard#converter', icon: CurrencyDollarIcon },
   ];
 
   const handleDisconnect = async () => {
