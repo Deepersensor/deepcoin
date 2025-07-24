@@ -18,7 +18,7 @@ import { Line } from 'react-chartjs-2';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import AuthGuard from '@/components/auth/AuthGuard';
 import { cryptoApiService, CryptoData } from '@/lib/services/cryptoApi';
-import useMultiChainWallet from '@/hooks/useMultiChainWallet';
+import { getModels, Model } from '@/integrations/io.net/client';
 
 // Register ChartJS components
 ChartJS.register(
@@ -56,6 +56,16 @@ export default function DashboardPage() {
     { id: 1, name: 'CoinGecko API', status: 'active', expiresIn: 'Free tier' },
     { id: 2, name: 'Blockchair API', status: 'expiring', expiresIn: '3 days' },
   ]);
+  const [ioNetModels, setIoNetModels] = useState<Model[]>([]);
+
+  // Fetch io.net models
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_INTEGRATIONS_IO_NET === 'true') {
+      getModels()
+        .then(setIoNetModels)
+        .catch(error => console.error('Error fetching io.net models:', error));
+    }
+  }, []);
 
   // Fetch crypto data
   useEffect(() => {
@@ -240,7 +250,33 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-          </motion.div>
+          """          </motion.div>
+
+          {process.env.NEXT_PUBLIC_INTEGRATIONS_IO_NET === 'true' && (
+            <motion.div
+              className="bg-gray-900 bg-opacity-60 backdrop-filter backdrop-blur-lg rounded-xl p-6 border border-gray-800"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">io.net Models</h3>
+              </div>
+              <div className="space-y-3">
+                {ioNetModels.map((model) => (
+                  <div
+                    key={model.id}
+                    className="flex justify-between items-center p-3 bg-gray-800 bg-opacity-50 rounded-lg"
+                  >
+                    <div>
+                      <p className="font-medium">{model.name}</p>
+                      <p className="text-sm text-gray-400">{model.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
         </div>
 
         {/* Charts & Stats */}
@@ -251,7 +287,7 @@ export default function DashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-            >
+            >""
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">Select Cryptocurrency</h3>
               </div>
