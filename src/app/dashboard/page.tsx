@@ -19,6 +19,7 @@ import DashboardLayout from '@/components/layout/DashboardLayout';
 import AuthGuard from '@/components/auth/AuthGuard';
 import { cryptoApiService, CryptoData } from '@/lib/services/cryptoApi';
 import { getModels, Model } from '@/integrations/io.net/client';
+import { getPortfolio, executeTrade, getPrice, Portfolio, TradeRequest, Price } from '@/integrations/recall/client';
 
 // Register ChartJS components
 ChartJS.register(
@@ -57,6 +58,7 @@ export default function DashboardPage() {
     { id: 2, name: 'Blockchair API', status: 'expiring', expiresIn: '3 days' },
   ]);
   const [ioNetModels, setIoNetModels] = useState<Model[]>([]);
+  const [recallPortfolio, setRecallPortfolio] = useState<Portfolio | null>(null);
 
   // Fetch io.net models
   useEffect(() => {
@@ -64,6 +66,15 @@ export default function DashboardPage() {
       getModels()
         .then(setIoNetModels)
         .catch(error => console.error('Error fetching io.net models:', error));
+    }
+  }, []);
+
+  // Fetch Recall portfolio
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_INTEGRATIONS_RECALL === 'true') {
+      getPortfolio()
+        .then(setRecallPortfolio)
+        .catch(error => console.error('Error fetching Recall portfolio:', error));
     }
   }, []);
 
@@ -275,6 +286,40 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </motion.div>
+          )}
+
+          {process.env.NEXT_PUBLIC_INTEGRATIONS_RECALL === 'true' && (
+            <motion.div
+              className="bg-gray-900 bg-opacity-60 backdrop-filter backdrop-blur-lg rounded-xl p-6 border border-gray-800"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Recall Portfolio</h3>
+              </div>
+              <div className="space-y-3">
+                {recallPortfolio ? (
+                  <div>
+                    <p className="text-sm text-gray-300">Total Value: <span className="font-bold text-cyan-400">${recallPortfolio.totalValue.toFixed(2)}</span></p>
+                    <h4 className="font-medium mt-2">Tokens:</h4>
+                    {recallPortfolio.tokens.length > 0 ? (
+                      <ul className="list-disc list-inside ml-4">
+                        {recallPortfolio.tokens.map((token, index) => (
+                          <li key={index} className="text-sm text-gray-400">
+                            {token.token}: {token.amount.toFixed(6)} (${token.value.toFixed(2)})
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="text-sm text-gray-400">No tokens in portfolio.</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400">Loading Recall portfolio...</p>
+                )}
               </div>
             </motion.div>
           )}
