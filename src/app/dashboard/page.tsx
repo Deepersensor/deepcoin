@@ -216,6 +216,7 @@ export default function DashboardPage() {
           </motion.div>
 
           <motion.div 
+            id="api-keys"
             className="bg-gray-900 bg-opacity-60 backdrop-filter backdrop-blur-lg rounded-xl p-6 border border-gray-800"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
