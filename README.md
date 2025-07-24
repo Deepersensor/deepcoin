@@ -90,6 +90,16 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 This project uses the [Blockchair API](https://blockchair.com/api) to fetch real-time blockchain data. You'll need to sign up for an API key and add it to your `.env.local` file.
 
+## Integrations
+
+### Recall Integration
+
+The application integrates with the Recall Network, a platform for automated crypto-trading agents. This allows for portfolio management, trade execution, and participation in trading competitions. For more information, see the `src/integrations/recall/README.md` file.
+
+### io.net Integration
+
+The application integrates with io.net, a decentralized GPU network. This allows the application to leverage io.net's resources for various tasks. For more information, see the `src/integrations/io.net/README.md` file.
+
 ## AI Models
 
 The prediction functionality uses machine learning models to analyze:
