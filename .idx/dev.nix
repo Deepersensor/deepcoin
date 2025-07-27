@@ -1,5 +1,6 @@
 {pkgs}: {
   channel = "stable-24.05";
+  services.docker.enable = true;
   packages = [
     pkgs.nodejs_20
     pkgs.gh

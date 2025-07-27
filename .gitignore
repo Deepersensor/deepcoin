@@ -43,3 +43,5 @@ next-env.d.ts
 docx/
 TODO2.md
 **.vsix
+.docx/
+codeforgeai.go

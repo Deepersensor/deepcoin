@@ -1,0 +1,9 @@
+# ChainOpera model card config for custom container
+inference_image_name: 'your-dockerhub-username/deepcoin:latest'
+container_run_command: 'pnpm start'
+port: 3000
+expose_subdomains: true
+workspace: './'
+readiness_probe:
+  httpGet:
+    path: '/health'

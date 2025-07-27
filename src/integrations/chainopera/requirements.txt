@@ -1,0 +1,3 @@
+# Requirements for ChainOpera agent
+fastapi
+uvicorn
