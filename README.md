@@ -2,6 +2,8 @@
 
 **DeepCoin** is a comprehensive AI-powered DeFi platform combining advanced AI prediction algorithms with blockchain integrations for real-time trading, portfolio management, and market analysis. It features a user-friendly interface for both novice and experienced traders, offering tools for crypto trading, forex trading, and AI financial advisory.
 
+Trading and crypto are riddled with uncertainty, risks and hard decisions. DeepCoin is a comprehensive AI-powered DeFi platform combining advanced AI prediction algorithms with blockchain integrations for real-time trading, portfolio management, and market analysis. It features a user-friendly interface for both novice and experienced traders, offering tools for crypto trading, forex trading, and AI financial advisory
+
 ## Integrations
 
 ### Recall Integration
